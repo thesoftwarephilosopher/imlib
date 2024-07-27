@@ -1,0 +1,84 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #000;
+  width: 100vw;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+#root {
+  color: white;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.5vh;
+
+  width: auto;
+  height: 100vh;
+  aspect-ratio: 44 / 90;
+
+  overflow: hidden;
+
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+#bottom {
+  position: relative;
+  background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Bartolom%C3%A9_Esteban_Murillo_-_The_Heavenly_and_Earthly_Trinities_-_1681-82.jpg/1411px-Bartolom%C3%A9_Esteban_Murillo_-_The_Heavenly_and_Earthly_Trinities_-_1681-82.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+
+#bottom #info {
+  background-color: #0007;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  padding: 0.75em 1em 1em;
+  font-weight: 100;
+
+  display: grid;
+  row-gap: 1em;
+  column-gap: 4em;
+  grid-template-columns: auto 1fr;
+}
+
+#weather-glimpse,
+#weather-full {
+  font-weight: normal;
+}
+
+#bottom #info #feastday {
+  grid-column: 1 / 3;
+  text-align: center;
+  margin: 0 2em;
+}
+
+#feastday {
+  font-size: 120%;
+  font-weight: normal;
+}
+
+#weather-icon {
+  height: 4vh;
+}
+
+#temperature {
+  font-size: 300%;
+}
+
+#temprow {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25em;
+}

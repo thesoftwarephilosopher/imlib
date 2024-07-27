@@ -1,0 +1,171 @@
+html {
+  color-scheme: dark;
+  font-size: 14px;
+  background: #111;
+  color: #ccc;
+
+  --bgalt: #000;
+  --border-color: #2d343c;
+  --bold-color: #fff;
+  --post-snippet-bg: #111;
+  --post-snippet-shadow: 0px 0px 2px #fff7;
+  --blue-bg: #19f;
+  --admin-border-color: var(--blue-bg);
+  --admin-bg-color: #004;
+  --disclaimer-border-color: var(--blue-bg);
+  --disclaimer-bg-color: #004;
+  --input-color: #fff7;
+}
+
+/* General resets and fixes */
+
+body {
+  margin: 0;
+}
+
+:is(h1, h2, h3, h4, h5, h6, b, strong) {
+  color: var(--bold-color);
+}
+
+a {
+  color: var(--blue-bg);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+[disabled] {
+  opacity: 0.5;
+  /* cursor: not-allowed; */
+}
+
+:is(ul, ol) {
+  padding-left: 20px;
+}
+
+hr {
+  height: 1px;
+  background-color: var(--border-color);
+  border: 0;
+}
+
+blockquote {
+  border-left: 3px solid var(--border-color);
+  padding-left: 1em;
+  margin: 0;
+}
+
+details {
+  margin: 1em 0;
+}
+
+/* Forms */
+
+:read-write,
+button,
+select {
+  padding: 0.5em;
+  background-color: var(--bgalt);
+  color: inherit;
+  border: none;
+  outline: 1px solid var(--border-color);
+  box-sizing: border-box;
+  font-family: system-ui;
+  font-size: inherit;
+  border-radius: 3px;
+}
+
+button {
+  cursor: pointer;
+}
+
+:read-write:focus,
+button:active,
+select:focus {
+  outline: 1px solid var(--blue-bg);
+  box-shadow:
+    0 0 1px 0px var(--blue-bg) inset,
+    0 0 1px 0px var(--blue-bg);
+  background-color: var(--bgalt);
+}
+
+:read-write::placeholder {
+  color: var(--input-color);
+}
+
+label:has(input) {
+  cursor: pointer;
+}
+
+label:has(input[type=radio]) {
+  position: relative;
+}
+
+label:has(input[type=radio]:checked)::before {
+  content: '';
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.12;
+}
+
+label:has(input[type=radio]:checked) {
+  padding-bottom: 3px;
+  border-bottom: 2px solid var(--blue-bg);
+}
+
+label:has(input[type=checkbox]) {
+  padding-left: 0.5em;
+  border-left: 1px solid transparent;
+}
+
+label:has(input[type=checkbox]:checked) {
+  color: var(--blue-bg);
+  border-left-color: currentColor;
+}
+
+input:not(:read-write) {
+  display: none;
+}
+
+@media screen and (max-width: 767px) {
+  input[type=text] {
+    font-size: 16px;
+  }
+}
+
+/* Admin */
+
+.admin {
+  border: 1px solid var(--admin-border-color);
+  background-color: var(--admin-bg-color);
+  padding: 0 1em;
+}
+
+/* Tabs */
+
+.tab-links {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+}
+
+.tab-links a {
+  border-bottom: 2px solid transparent;
+  color: inherit;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+.tab-links a.active {
+  border-bottom-color: var(--blue-bg);
+}
+
+.tab-links a:not(.active):hover {
+  border-bottom-color: currentColor;
+}
