@@ -1,7 +1,7 @@
 import * as chokidar from 'chokidar';
 import * as path from 'path';
-import { Runtime } from './runtime.js';
-import { Server } from './server.js';
+import { Runtime } from '../runtime.js';
+import { Server } from '../server.js';
 
 process.env['DEV'] = '1';
 

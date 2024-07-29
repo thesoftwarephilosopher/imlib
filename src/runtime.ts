@@ -122,7 +122,7 @@ export class Runtime {
   }
 
   #shimFile(filepath: string) {
-    let content = fs.readFileSync('runtime' + filepath);
+    let content = fs.readFileSync(__dirname + '/..' + filepath);
     const file = new File(filepath, content, this);
     this.files.set(file.path, file);
   }
