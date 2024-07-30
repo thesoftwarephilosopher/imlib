@@ -100,6 +100,7 @@ export class Runtime {
     const files = fs.readdirSync(dirRealPath);
     for (const name of files) {
       if (name.startsWith('.')) continue;
+      if (name.endsWith('.d.ts')) continue;
 
       const realFilePath = path.join(dirRealPath, name);
       const stat = fs.statSync(realFilePath);
