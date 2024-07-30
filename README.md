@@ -1,4 +1,4 @@
-# Immaculata Library
+# imlib
 
 *Simple TypeScript/JSX SSG*
 
