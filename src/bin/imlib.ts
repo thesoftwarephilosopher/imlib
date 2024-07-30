@@ -3,11 +3,16 @@
 import { generateFiles } from "./generate";
 import { startDevServer } from "./main";
 
-const cmd = process.argv[2];
+const cmd = process.argv[2] ?? '';
 
-if (cmd === 'dev') {
-  startDevServer();
-}
-else if (cmd === 'generate') {
-  generateFiles();
+const fns: Record<string, () => void> = {
+  dev: startDevServer,
+  generate: generateFiles,
+};
+
+const fn = fns[cmd] ?? showHelp;
+fn();
+
+function showHelp() {
+  console.log("Usage: imlib <dev | generate>");
 }
