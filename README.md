@@ -2,6 +2,8 @@
 
 *Simple TypeScript/JSX SSG*
 
+Extracted from [sdegutis/immaculatalibrary.com]()
+
 ### Benefits
 
 1. JSX in SSG side, return strings
