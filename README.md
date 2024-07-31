@@ -21,6 +21,8 @@
 1. **Structure:**  
    All files under `site` are processed and turned into the website.  
    Only files that match the patterns below have any special processing.  
+   Files under `/admin/` are only visible in `imlib dev` (for site self-editing).  
+   Files ending with `.d.ts` is skipped, so you can ducktype CDN imports.  
    All other files are left as-is in the site.
 
 2. **Dynamic single-files:**  
@@ -38,13 +40,18 @@
    Example: `[article].html.tsx` containing `export default ['hello-world', <b>hello world</b>];`  
    This will produce `hello-world.html` containing `<b>hello world</b>`.
 
-4. **Browser-side scripts:**  
+4. **Importing directories**:
+   In the SSG side, you can `import files from './'` or any dir ending with `/`.  
+   The return value of import is `{ path: string, content: Buffer }[]`.  
+   This allows processing and transforming basically any data in any way.
+
+5. **Browser-side scripts:**  
    Files containing `$` in the filename are transformed into `.js` for the browser.  
    This allows browser-side scripts to be conveniently written in JSX and TypeScript.  
    Note that these are compiled using ESM, so they must be imported/src'd as modules.  
    JSX in these files are able to attach event handlers directly to the attributes.
 
-5. **Shared-side modules:**  
+6. **Shared-side modules:**  
    Technically, browser-side scripts can *also* be imported on the SSG side.  
    The caveat is that they have different JSX semantics, and can't access Node modules.  
    In practice, this is useful for shared helpers, shared types, and non-dynamic JSX components.
