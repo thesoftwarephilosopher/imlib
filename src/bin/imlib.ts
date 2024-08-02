@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
+import { startDevServer } from "./dev";
 import { generateFiles } from "./generate";
-import { startDevServer } from "./main";
 
 const cmd = process.argv[2] ?? '';
 
