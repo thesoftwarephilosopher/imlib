@@ -1,3 +1,4 @@
+import { basename } from "path";
 import { File } from "./file";
 
 const extFns = {
@@ -37,7 +38,7 @@ export function processSite(files: Map<string, File>) {
       if (path.endsWith('.md')) {
         // skip
       }
-      else if (path.endsWith('.js') && !path.includes('$')) {
+      else if (path.endsWith('.js') && basename(path).startsWith('_')) {
         // skip
       }
       else {

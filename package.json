@@ -1,6 +1,6 @@
 {
   "name": "@imlib/core",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Simple TypeScript/JSX SSG",
   "module": "out/main.js",
   "bin": {
