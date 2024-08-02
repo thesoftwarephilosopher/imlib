@@ -48,7 +48,7 @@ Extracted from [sdegutis/immaculatalibrary.com]()
    This allows processing and transforming basically any data in any way.
 
 5. **Browser-side scripts:**  
-   Files containing `$` in the filename are transformed into `.js` for the browser.  
+   TS/TSX files that don't start with `_` are transformed into `.js` for the browser.  
    This allows browser-side scripts to be conveniently written in JSX and TypeScript.  
    Note that these are compiled using ESM, so they must be imported/src'd as modules.  
    JSX in these files are able to attach event handlers directly to the attributes.
