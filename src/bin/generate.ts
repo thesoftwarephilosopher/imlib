@@ -1,9 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path/posix';
 import { Runtime } from '../runtime.js';
+import { processSite } from '../ssg.js';
 
 export function generateFiles() {
-  const runtime = new Runtime("site");
+  const runtime = new Runtime("site", processSite);
 
   const out = runtime.build()!;
 

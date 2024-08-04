@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as path from "path/posix";
 import { File, convertTsExts } from "./file.js";
-import { processSite } from "./ssg.js";
 
 export class Runtime {
 
@@ -10,7 +9,10 @@ export class Runtime {
 
   handlers = new Map<string, (body: string) => string>();
 
-  constructor(private realBase: string) {
+  constructor(
+    private realBase: string,
+    private processor: (files: Map<string, File>) => Map<string, Buffer | string>
+  ) {
     this.#loadDir('/');
     this.#shimFile('/core/$jsx.ts');
     this.#shimFile('/core/jsx.ts');
@@ -18,7 +20,7 @@ export class Runtime {
 
   build() {
     const start = Date.now();
-    const outfiles = processSite(this.files);
+    const outfiles = this.processor(this.files);
     console.log(`Time: ${Date.now() - start} ms`);
     return outfiles;
   }
