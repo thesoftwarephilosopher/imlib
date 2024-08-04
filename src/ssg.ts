@@ -12,7 +12,7 @@ export function processSite(files: Map<string, File>) {
   const outfiles = new Map<string, Buffer | string>();
   const isDev = !!process.env['DEV'];
 
-  for (const { path, content } of files.values()) {
+  for (const { path, content, module } of files.values()) {
     if (!isDev && path.startsWith('/admin/')) continue;
 
     let match;
@@ -22,7 +22,7 @@ export function processSite(files: Map<string, File>) {
 
       const filepath = path.slice(0, -3);
 
-      const exported = files.get(path)!.module?.require().default;
+      const exported = module?.require().default;
 
       if (path.match(ARRAY_FILE_REGEX)) {
         for (const [slug, jsx] of exported) {
