@@ -27,6 +27,8 @@
     "typescript": "^5.5.2"
   },
   "dependencies": {
+    "@imlib/jsx-dom": "^0.0.1",
+    "@imlib/jsx-strings": "^0.0.3",
     "chokidar": "^3.6.0",
     "sucrase": "^3.35.0"
   }

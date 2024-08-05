@@ -14,8 +14,8 @@ export class Runtime {
     private processor: (files: Map<string, File>) => Map<string, Buffer | string>
   ) {
     this.#loadDir('/');
-    this.#shimFile('/core/$jsx.ts');
-    this.#shimFile('/core/jsx.ts');
+    this.#putFile('/core/$jsx.ts', fs.readFileSync(require.resolve("@imlib/jsx-dom")));
+    this.#putFile('/core/jsx.ts', fs.readFileSync(require.resolve("@imlib/jsx-strings")));
   }
 
   build() {
@@ -68,12 +68,10 @@ export class Runtime {
   #createFile(filepath: string) {
     const realFilePath = this.realPathFor(filepath);
     let content = fs.readFileSync(realFilePath);
-    const file = new File(filepath, content, this);
-    this.files.set(file.path, file);
+    this.#putFile(filepath, content);
   }
 
-  #shimFile(filepath: string) {
-    let content = fs.readFileSync(__dirname + '/..' + filepath);
+  #putFile(filepath: string, content: string | Buffer) {
     const file = new File(filepath, content, this);
     this.files.set(file.path, file);
   }
