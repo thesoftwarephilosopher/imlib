@@ -1,4 +1,4 @@
-import { File } from '@imlib/runtime';
+import { SiteProcessor } from '@imlib/runtime';
 
 const extFns = {
   html: hoist,
@@ -7,7 +7,7 @@ const extFns = {
 
 const ARRAY_FILE_REGEX = /\[.+\]/;
 
-export function processSite(files: Map<string, File>) {
+export const processSite: SiteProcessor = (files) => {
   const outfiles = new Map<string, Buffer | string>();
   const isDev = !!process.env['DEV'];
 
@@ -47,7 +47,7 @@ export function processSite(files: Map<string, File>) {
   }
 
   return outfiles;
-}
+};
 
 function hoist(jsx: string) {
   const hoisted = new Set<string>();
