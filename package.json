@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sdegutis/imlib.git"
+    "url": "git+https://github.com/sdegutis/imlib-cli.git"
   },
   "keywords": [],
   "author": "Steven Degutis",
   "license": "",
   "bugs": {
-    "url": "https://github.com/sdegutis/imlib/issues"
+    "url": "https://github.com/sdegutis/imlib-cli/issues"
   },
-  "homepage": "https://github.com/sdegutis/imlib#readme",
+  "homepage": "https://github.com/sdegutis/imlib-cli#readme",
   "devDependencies": {
     "@types/node": "^20.14.2",
     "typescript": "^5.5.2"
