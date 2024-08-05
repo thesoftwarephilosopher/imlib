@@ -9,24 +9,32 @@ export class Runtime {
 
   handlers = new Map<string, (body: string) => string>();
 
-  constructor(
-    private realBase: string,
-    private processor: (files: Map<string, File>) => Map<string, Buffer | string>
-  ) {
+  #siteDir;
+  #processor;
+
+  constructor(config: {
+    siteDir: string,
+    processor: (files: Map<string, File>) => Map<string, Buffer | string>,
+    jsxContentSsg: string | Buffer,
+    jsxContentBrowser: string | Buffer,
+  }) {
+    this.#siteDir = config.siteDir;
+    this.#processor = config.processor;
+
     this.#loadDir('/');
-    this.#putFile('/core/$jsx.ts', fs.readFileSync(require.resolve("@imlib/jsx-dom")));
-    this.#putFile('/core/jsx.ts', fs.readFileSync(require.resolve("@imlib/jsx-strings")));
+    this.#putFile('/core/$jsx.ts', config.jsxContentBrowser);
+    this.#putFile('/core/jsx.ts', config.jsxContentSsg);
   }
 
   build() {
     const start = Date.now();
-    const outfiles = this.processor(this.files);
+    const outfiles = this.#processor(this.files);
     console.log(`Time: ${Date.now() - start} ms`);
     return outfiles;
   }
 
   pathsUpdated(...paths: string[]) {
-    const filepaths = paths.map(p => p.slice(this.realBase.length));
+    const filepaths = paths.map(p => p.slice(this.#siteDir.length));
 
     for (const filepath of filepaths) {
       const realFilePath = this.realPathFor(filepath);
@@ -77,7 +85,7 @@ export class Runtime {
   }
 
   realPathFor(filepath: string) {
-    return path.join(this.realBase, filepath);
+    return path.join(this.#siteDir, filepath);
   }
 
   addDeps(requiredBy: string, requiring: string) {

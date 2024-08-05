@@ -4,7 +4,12 @@ import { Runtime } from '../runtime.js';
 import { processSite } from '../ssg.js';
 
 export function generateFiles() {
-  const runtime = new Runtime("site", processSite);
+  const runtime = new Runtime({
+    siteDir: "site",
+    processor: processSite,
+    jsxContentBrowser: fs.readFileSync(require.resolve("@imlib/jsx-dom")),
+    jsxContentSsg: fs.readFileSync(require.resolve("@imlib/jsx-strings")),
+  });
 
   const out = runtime.build()!;
 

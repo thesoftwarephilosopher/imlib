@@ -1,4 +1,5 @@
 import * as chokidar from 'chokidar';
+import * as fs from 'fs';
 import * as path from 'path';
 import { Runtime } from '../runtime.js';
 import { Server } from '../server.js';
@@ -10,7 +11,12 @@ export function startDevServer() {
   const server = new Server();
   server.startServer(8080);
 
-  const runtime = new Runtime("site", processSite);
+  const runtime = new Runtime({
+    siteDir: "site",
+    processor: processSite,
+    jsxContentBrowser: fs.readFileSync(require.resolve("@imlib/jsx-dom")),
+    jsxContentSsg: fs.readFileSync(require.resolve("@imlib/jsx-strings")),
+  });
   server.handlers = runtime.handlers;
 
   const outfiles = runtime.build();
