@@ -2,8 +2,8 @@
 
 import { startDevServer } from '@imlib/dev-server';
 import { generateFiles } from '@imlib/file-generator';
+import { processSite } from '@imlib/simple-site-processor';
 import * as fs from 'fs';
-import { processSite } from "../ssg";
 
 const config = {
   siteDir: "site",
