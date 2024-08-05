@@ -1,8 +1,7 @@
 {
-  "name": "immaculata-library",
-  "version": "1.0.0",
+  "name": "@imlib/core",
+  "version": "2.2.3",
   "main": "out/index.js",
-  "types": "imlib.d.ts",
   "bin": {
     "imlib": "out/cli.js"
   },
