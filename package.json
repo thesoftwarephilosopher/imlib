@@ -1,34 +1,26 @@
 {
-  "name": "@imlib/cli",
-  "version": "0.0.2",
-  "description": "imlib - command line interface",
+  "name": "immaculata-library",
+  "version": "1.0.0",
+  "main": "out/index.js",
+  "types": "imlib.d.ts",
   "bin": {
-    "imlib": "out/imlib.js"
+    "imlib": "out/cli.js"
   },
   "scripts": {
     "build": "tsc --build",
     "watch": "tsc --build --watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sdegutis/imlib-cli.git"
-  },
   "keywords": [],
-  "author": "Steven Degutis",
-  "license": "",
-  "bugs": {
-    "url": "https://github.com/sdegutis/imlib-cli/issues"
-  },
-  "homepage": "https://github.com/sdegutis/imlib-cli#readme",
-  "devDependencies": {
-    "@types/node": "^20.14.2",
-    "typescript": "^5.5.2"
-  },
+  "author": "",
+  "license": "MIT",
+  "description": "",
   "dependencies": {
-    "@imlib/dev-server": "^0.0.2",
-    "@imlib/file-generator": "^0.0.1",
-    "@imlib/jsx-dom": "^0.0.1",
-    "@imlib/jsx-strings": "^0.0.3",
-    "@imlib/simple-site-processor": "^0.0.1"
+    "chokidar": "^3.6.0",
+    "sucrase": "^3.35.0"
+  },
+  "devDependencies": {
+    "@types/chokidar": "^1.7.5",
+    "@types/node": "^22.1.0",
+    "typescript": "^5.5.4"
   }
 }

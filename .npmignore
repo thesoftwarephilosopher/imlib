@@ -1,2 +1,7 @@
 *
 !out/**
+!imlib.d.ts
+!src/jsx-strings.ts
+!src/jsx-dom.ts
+out/jsx-strings.*
+out/jsx-dom.*

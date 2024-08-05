@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-import { startDevServer } from '@imlib/dev-server';
-import { generateFiles } from '@imlib/file-generator';
-import { processSite } from '@imlib/simple-site-processor';
 import * as fs from 'fs';
+import { startDevServer } from './dev-server';
+import { generateFiles } from './file-generator';
+import { processSite } from './ssp';
 
 const config = {
   siteDir: "site",
   processor: processSite,
-  jsxContentBrowser: fs.readFileSync(require.resolve("@imlib/jsx-dom")),
-  jsxContentSsg: fs.readFileSync(require.resolve("@imlib/jsx-strings")),
+  jsxContentBrowser: fs.readFileSync(__dirname + '/../src/jsx-dom.ts'),
+  jsxContentSsg: fs.readFileSync(__dirname + '/../src/jsx-strings.ts'),
 };
 
 const fns: Record<string, () => void> = {
