@@ -4,7 +4,7 @@
   "description": "Simple TypeScript/JSX SSG",
   "module": "out/main.js",
   "bin": {
-    "imlib": "out/bin/imlib.js"
+    "imlib": "out/imlib.js"
   },
   "types": "imlib.d.ts",
   "scripts": {
@@ -31,9 +31,6 @@
     "@imlib/file-generator": "^0.0.1",
     "@imlib/jsx-dom": "^0.0.1",
     "@imlib/jsx-strings": "^0.0.3",
-    "@imlib/runtime": "^0.0.1",
-    "@imlib/simple-site-processor": "^0.0.1",
-    "chokidar": "^3.6.0",
-    "sucrase": "^3.35.0"
+    "@imlib/simple-site-processor": "^0.0.1"
   }
 }
