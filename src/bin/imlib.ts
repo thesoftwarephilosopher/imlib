@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { startDevServer } from '@imlib/dev-server';
+import { generateFiles } from '@imlib/file-generator';
 import * as fs from 'fs';
 import { processSite } from "../ssg";
-import { generateFiles } from "./generate";
 
 const config = {
   siteDir: "site",

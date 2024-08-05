@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@imlib/dev-server": "^0.0.1",
+    "@imlib/file-generator": "^0.0.1",
     "@imlib/jsx-dom": "^0.0.1",
     "@imlib/jsx-strings": "^0.0.3",
     "@imlib/runtime": "^0.0.1",
