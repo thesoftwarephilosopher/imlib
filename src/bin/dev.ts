@@ -1,7 +1,7 @@
+import { Runtime } from '@imlib/runtime';
 import * as chokidar from 'chokidar';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Runtime } from '../runtime.js';
 import { Server } from '../server.js';
 import { processSite } from '../ssg.js';
 

@@ -1,6 +1,6 @@
+import { Runtime } from '@imlib/runtime';
 import * as fs from 'fs';
 import * as path from 'path/posix';
-import { Runtime } from '../runtime.js';
 import { processSite } from '../ssg.js';
 
 export function generateFiles() {
