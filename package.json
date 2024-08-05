@@ -25,7 +25,7 @@
     "typescript": "^5.5.2"
   },
   "dependencies": {
-    "@imlib/dev-server": "^0.0.1",
+    "@imlib/dev-server": "^0.0.2",
     "@imlib/file-generator": "^0.0.1",
     "@imlib/jsx-dom": "^0.0.1",
     "@imlib/jsx-strings": "^0.0.3",
