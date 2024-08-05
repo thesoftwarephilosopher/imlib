@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
+import { startDevServer } from '@imlib/dev-server';
 import * as fs from 'fs';
 import { processSite } from "../ssg";
-import { startDevServer } from "./dev";
 import { generateFiles } from "./generate";
 
 const config = {
