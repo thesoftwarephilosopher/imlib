@@ -1,7 +1,7 @@
 {
-  "name": "@imlib/core",
-  "version": "2.2.2",
-  "description": "Simple TypeScript/JSX SSG",
+  "name": "@imlib/cli",
+  "version": "0.0.1",
+  "description": "imlib - command line interface",
   "bin": {
     "imlib": "out/imlib.js"
   },
