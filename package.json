@@ -9,10 +9,18 @@
     "build": "tsc --build",
     "watch": "tsc --build --watch"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sdegutis/imlib.git"
+  },
   "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "description": "",
+  "author": "Steven Degutis",
+  "license": "",
+  "description": "Simple TypeScript/JSX SSG",
+  "bugs": {
+    "url": "https://github.com/sdegutis/imlib/issues"
+  },
+  "homepage": "https://github.com/sdegutis/imlib#readme",
   "dependencies": {
     "chokidar": "^3.6.0",
     "sucrase": "^3.35.0"
