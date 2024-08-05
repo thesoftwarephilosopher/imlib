@@ -1,22 +1,20 @@
-import { Runtime } from '@imlib/runtime';
+import { Runtime, SiteProcessor } from '@imlib/runtime';
 import * as chokidar from 'chokidar';
-import * as fs from 'fs';
 import * as path from 'path';
 import { Server } from '../server.js';
-import { processSite } from '../ssg.js';
 
-export function startDevServer() {
+export function startDevServer(config: {
+  siteDir: string;
+  processor: SiteProcessor;
+  jsxContentSsg: string | Buffer;
+  jsxContentBrowser: string | Buffer;
+}) {
   process.env['DEV'] = '1';
 
   const server = new Server();
   server.startServer(8080);
 
-  const runtime = new Runtime({
-    siteDir: "site",
-    processor: processSite,
-    jsxContentBrowser: fs.readFileSync(require.resolve("@imlib/jsx-dom")),
-    jsxContentSsg: fs.readFileSync(require.resolve("@imlib/jsx-strings")),
-  });
+  const runtime = new Runtime(config);
   server.handlers = runtime.handlers;
 
   const outfiles = runtime.build();

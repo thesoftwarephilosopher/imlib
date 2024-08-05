@@ -1,15 +1,14 @@
-import { Runtime } from '@imlib/runtime';
+import { Runtime, SiteProcessor } from '@imlib/runtime';
 import * as fs from 'fs';
 import * as path from 'path/posix';
-import { processSite } from '../ssg.js';
 
-export function generateFiles() {
-  const runtime = new Runtime({
-    siteDir: "site",
-    processor: processSite,
-    jsxContentBrowser: fs.readFileSync(require.resolve("@imlib/jsx-dom")),
-    jsxContentSsg: fs.readFileSync(require.resolve("@imlib/jsx-strings")),
-  });
+export function generateFiles(config: {
+  siteDir: string;
+  processor: SiteProcessor;
+  jsxContentSsg: string | Buffer;
+  jsxContentBrowser: string | Buffer;
+}) {
+  const runtime = new Runtime(config);
 
   const out = runtime.build()!;
 
