@@ -5,7 +5,7 @@
 * [Live demo](https://sdegutis.github.io/imlib-template/)
 * [Live demo's source code](https://github.com/sdegutis/imlib-template/tree/main/site)
 * [Template repo](https://github.com/sdegutis/imlib-template)
-* [Comprehensive demo](https://github.com/sdegutis/immaculatalibrary.com/tree/main/site)
+* [Real world usage](https://github.com/sdegutis/immaculatalibrary.com/tree/main/site)
 
 ### Benefits
 
