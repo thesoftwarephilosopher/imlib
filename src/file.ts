@@ -15,14 +15,20 @@ export class File {
     if (path.match(/\.tsx?$/)) {
       const code = content.toString('utf8');
       this.module = new Module(code, this.path, runtime);
-      this.content = compileTSX(code).code;
+      this.content = compileTSX(code, undefined, path).code;
       this.path = convertTsExts(path);
     }
   }
 
 }
 
-export function compileTSX(code: string, realFilePath?: string) {
+export function compileTSX(code: string, realFilePath?: string, browserFilePath?: string) {
+  let prefix = '';
+  if (browserFilePath && !browserFilePath.startsWith('/@imlib/')) {
+    const levels = browserFilePath.match(/\//g)!.length - 1;
+    prefix = '.' + '/..'.repeat(levels);
+  }
+
   const options: sucrase.Options = {
     transforms: ['typescript', 'jsx'],
     jsxRuntime: 'automatic',
@@ -40,7 +46,7 @@ export function compileTSX(code: string, realFilePath?: string) {
     result.code = result.code.replace(/"\/@imlib\/jsx-runtime"/g, `"/@imlib/jsx-node.js"`);
   }
   else {
-    result.code = result.code.replace(/"\/@imlib\/jsx-runtime"/g, `"/@imlib/jsx-browser.js"`);
+    result.code = result.code.replace(/"\/@imlib\/jsx-runtime"/g, `"${prefix}/@imlib/jsx-browser.js"`);
   }
   return result;
 }
