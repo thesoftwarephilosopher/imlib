@@ -2,7 +2,8 @@
 
 *Simple TypeScript/JSX SSG*
 
-Extracted from [sdegutis/immaculatalibrary.com]()
+* Comprehensive example: [sdegutis/immaculatalibrary.com](https://github.com/sdegutis/immaculatalibrary.com)
+* Template repo: [sdegutis/imlib-template](https://github.com/sdegutis/imlib-template)
 
 ### Benefits
 
