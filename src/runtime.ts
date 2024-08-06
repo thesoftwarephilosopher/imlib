@@ -43,6 +43,9 @@ export class Runtime {
   }
 
   pathsUpdated(...paths: string[]) {
+    this.files.delete('/_imlib/jsx-browser.js');
+    this.files.delete('/_imlib/jsx-node.js');
+
     const filepaths = paths.map(p => p.slice(this.config.siteDir.length));
 
     for (const filepath of filepaths) {
