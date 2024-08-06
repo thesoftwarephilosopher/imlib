@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "tsc --build",
-    "generate": "imlib generate",
+    "generate": "out/cli.js generate",
     "watch": "tsc --build --watch"
   },
   "repository": {
