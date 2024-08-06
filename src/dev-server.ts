@@ -1,21 +1,14 @@
 import * as chokidar from 'chokidar';
 import * as http from "http";
 import * as path from 'path';
-import { Runtime, SiteProcessor } from './runtime';
+import { Runtime } from './runtime';
 
-export function startDevServer(config: {
-  siteDir: string;
-  processor: SiteProcessor;
-  jsxContentSsg: string | Buffer;
-  jsxContentBrowser: string | Buffer;
-  port?: number,
-}) {
+export function startDevServer(runtime: Runtime, config?: { port?: number }) {
   process.env['DEV'] = '1';
 
   const server = new Server();
-  server.startServer(config.port ?? 8080);
+  server.startServer(config?.port ?? 8080);
 
-  const runtime = new Runtime(config);
   server.handlers = runtime.handlers;
 
   const outfiles = runtime.build();

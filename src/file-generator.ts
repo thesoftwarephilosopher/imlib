@@ -1,15 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path/posix';
-import { Runtime, SiteProcessor } from './runtime';
+import { Runtime } from './runtime';
 
-export function generateFiles(config: {
-  siteDir: string;
-  processor: SiteProcessor;
-  jsxContentSsg: string | Buffer;
-  jsxContentBrowser: string | Buffer;
-}) {
-  const runtime = new Runtime(config);
-
+export function generateFiles(runtime: Runtime) {
   const out = runtime.build()!;
 
   const madeDirs = new Set<string>();
