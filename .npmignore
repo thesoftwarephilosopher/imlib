@@ -1,6 +1,6 @@
 *
 !out/**
-!imlib.d.ts
+!runtime.d.ts
 !src/jsx-strings.ts
 !src/jsx-dom.ts
 out/jsx-strings.*
