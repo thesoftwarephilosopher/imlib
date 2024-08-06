@@ -37,10 +37,10 @@ export function compileTSX(code: string, realFilePath?: string) {
   }
   const result = sucrase.transform(code, options);
   if (realFilePath) {
-    result.code = result.code.replace(/"\/core\/jsx-runtime"/g, `"/core/jsx.js"`);
+    result.code = result.code.replace(/"\/__core\/jsx-runtime"/g, `"/core/_jsx.js"`);
   }
   else {
-    result.code = result.code.replace(/"\/core\/jsx-runtime"/g, `"/core/$jsx.js"`);
+    result.code = result.code.replace(/"\/__core\/jsx-runtime"/g, `"/core/jsx.js"`);
   }
   return result;
 }

@@ -24,8 +24,8 @@ export class Runtime {
     this.#processor = config.processor;
 
     this.#loadDir('/');
-    this.#putFile('/core/$jsx.ts', config.jsxContentBrowser);
-    this.#putFile('/core/jsx.ts', config.jsxContentSsg);
+    this.#putFile('/__core/jsx.ts', config.jsxContentBrowser);
+    this.#putFile('/__core/_jsx.ts', config.jsxContentSsg);
   }
 
   build() {
