@@ -24,8 +24,8 @@ export class Runtime {
   }
 
   build() {
-    this.#putFileIfNeeded('/@imlib/jsx-browser.js', this.config.jsxContentBrowser ?? jsxDom);
-    this.#putFileIfNeeded('/@imlib/jsx-node.js', this.config.jsxContentSsg ?? jsxStrings);
+    this.#putFileIfNeeded('/@imlib/jsx-browser.ts', this.config.jsxContentBrowser ?? jsxDom);
+    this.#putFileIfNeeded('/@imlib/jsx-node.ts', this.config.jsxContentSsg ?? jsxStrings);
 
     const processor = (
       this.files.get('/@imlib/processor.js')?.module?.require().default ??
@@ -88,7 +88,7 @@ export class Runtime {
   }
 
   #putFileIfNeeded(filepath: string, content: string | Buffer) {
-    if (!this.files.has(filepath)) {
+    if (!this.files.has(convertTsExts(filepath))) {
       this.#putFile(filepath, content);
     }
   }
