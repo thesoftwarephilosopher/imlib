@@ -87,9 +87,7 @@ export class Runtime {
   }
 
   #createFile(filepath: string) {
-    const realFilePath = this.realPathFor(filepath);
-    let content = fs.readFileSync(realFilePath);
-    this.#putFile(filepath, content);
+    this.#putFile(filepath, fs.readFileSync(this.realPathFor(filepath)));
   }
 
   #putFile(filepath: string, content: string | Buffer) {
