@@ -26,7 +26,7 @@ export function compileTSX(code: string, realFilePath?: string) {
   const options: sucrase.Options = {
     transforms: ['typescript', 'jsx'],
     jsxRuntime: 'automatic',
-    jsxImportSource: '/__core',
+    jsxImportSource: '/imlibruntime',
     disableESTransforms: true,
     production: true,
   };
@@ -37,10 +37,10 @@ export function compileTSX(code: string, realFilePath?: string) {
   }
   const result = sucrase.transform(code, options);
   if (realFilePath) {
-    result.code = result.code.replace(/"\/__core\/jsx-runtime"/g, `"/__core/_jsx.js"`);
+    result.code = result.code.replace(/"\/imlibruntime\/jsx-runtime"/g, `"/imlibruntime/_jsx.js"`);
   }
   else {
-    result.code = result.code.replace(/"\/__core\/jsx-runtime"/g, `"/__core/jsx.js"`);
+    result.code = result.code.replace(/"\/imlibruntime\/jsx-runtime"/g, `"/imlibruntime/jsx.js"`);
   }
   return result;
 }
