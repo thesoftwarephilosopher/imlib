@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "tsc --build",
-    "generate": "out/cli.js generate",
+    "generate": "node out/cli.js generate",
     "watch": "tsc --build --watch"
   },
   "repository": {
