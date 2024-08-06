@@ -2,13 +2,15 @@
 
 *Simple TypeScript/JSX SSG*
 
-* Comprehensive example: [sdegutis/immaculatalibrary.com](https://github.com/sdegutis/immaculatalibrary.com)
-* Template repo: [sdegutis/imlib-template](https://github.com/sdegutis/imlib-template)
+* [Live demo](https://sdegutis.github.io/imlib-template/)
+* [Live demo's source code](https://github.com/sdegutis/imlib-template/tree/main/site)
+* [Template repo](https://github.com/sdegutis/imlib-template)
+* [Comprehensive demo](https://github.com/sdegutis/immaculatalibrary.com/main/site)
 
 ### Benefits
 
-1. JSX in SSG side, return strings
-2. JSX in browser side, returns plain DOM elements
+1. TypeScript SSG
+2. Custom JSX implementation (can return DOM nodes, strings, etc)
 3. Extremely fast and efficient
 
 ### Try it out
@@ -18,10 +20,6 @@
 3. Open http://localhost:8080
 4. Change something
 5. Reload the browser
-
-### Example
-
-See https://github.com/sdegutis/immaculatalibrary.com for a practical real-world example.
 
 ### Performance
 
