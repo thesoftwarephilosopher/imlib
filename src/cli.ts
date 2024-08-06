@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import * as fs from 'fs';
 import { startDevServer } from './dev-server';
 import { generateFiles } from './file-generator';
 import { Runtime } from './runtime';
@@ -9,8 +8,6 @@ import { processSite } from './ssp';
 const runtime = new Runtime({
   siteDir: "site",
   processor: processSite,
-  jsxContentBrowser: fs.readFileSync(__dirname + '/../src/jsx-dom.ts'),
-  jsxContentSsg: fs.readFileSync(__dirname + '/../src/jsx-strings.ts'),
 });
 
 const fns: Record<string, () => void> = {

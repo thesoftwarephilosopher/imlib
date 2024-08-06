@@ -17,15 +17,25 @@ export class Runtime {
   constructor(config: {
     siteDir: string,
     processor: SiteProcessor,
-    jsxContentSsg: string | Buffer,
-    jsxContentBrowser: string | Buffer,
+    jsxContentSsg?: string | Buffer,
+    jsxContentBrowser?: string | Buffer,
   }) {
     this.#siteDir = config.siteDir;
     this.#processor = config.processor;
 
     this.#loadDir('/');
-    this.#putFile('/imlibruntime/jsx.ts', config.jsxContentBrowser);
-    this.#putFile('/imlibruntime/_jsx.ts', config.jsxContentSsg);
+
+    this.#putFile('/imlibruntime/jsx.ts',
+      config.jsxContentBrowser ??
+      this.files.get('/_imlib/jsx-browser.js')?.content ??
+      fs.readFileSync(__dirname + '/../src/jsx-dom.ts')
+    );
+
+    this.#putFile('/imlibruntime/_jsx.ts',
+      config.jsxContentSsg ??
+      this.files.get('/_imlib/jsx-node.js')?.content ??
+      fs.readFileSync(__dirname + '/../src/jsx-strings.ts')
+    );
   }
 
   build() {
