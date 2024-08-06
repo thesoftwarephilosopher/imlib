@@ -4,6 +4,9 @@ import { convertTsExts, File } from "./file.js";
 
 export type SiteProcessor = (files: Iterable<File>) => Map<string, Buffer | string>;
 
+const jsxDom = fs.readFileSync(__dirname + '/../src/jsx-dom.ts');
+const jsxStrings = fs.readFileSync(__dirname + '/../src/jsx-strings.ts');
+
 export class Runtime {
 
   files = new Map<string, File>();
@@ -11,47 +14,39 @@ export class Runtime {
 
   handlers = new Map<string, (body: string) => string>();
 
-  #siteDir;
-  #processor;
-
-  constructor(config: {
+  constructor(private config: {
     siteDir: string,
     processor: SiteProcessor,
     jsxContentSsg?: string | Buffer,
     jsxContentBrowser?: string | Buffer,
   }) {
-    this.#siteDir = config.siteDir;
-    this.#processor = config.processor;
-
     this.#loadDir('/');
-
-    this.#putFile('/imlibruntime/jsx.ts',
-      config.jsxContentBrowser ??
-      this.files.get('/_imlib/jsx-browser.js')?.content ??
-      fs.readFileSync(__dirname + '/../src/jsx-dom.ts')
-    );
-
-    this.#putFile('/imlibruntime/_jsx.ts',
-      config.jsxContentSsg ??
-      this.files.get('/_imlib/jsx-node.js')?.content ??
-      fs.readFileSync(__dirname + '/../src/jsx-strings.ts')
-    );
   }
 
   build() {
+    this.#putFile('/imlibruntime/jsx.ts',
+      this.files.get('/_imlib/jsx-browser.js')?.content ??
+      this.config.jsxContentBrowser ??
+      jsxDom
+    );
+
+    this.#putFile('/imlibruntime/_jsx.ts',
+      this.files.get('/_imlib/jsx-node.js')?.content ??
+      this.config.jsxContentSsg ??
+      jsxStrings
+    );
+
     const start = Date.now();
-    const outfiles = this.#processor(this.files.values());
+    const outfiles = this.config.processor(this.files.values());
     console.log(`Time: ${Date.now() - start} ms`);
     return outfiles;
   }
 
   pathsUpdated(...paths: string[]) {
-    const filepaths = paths.map(p => p.slice(this.#siteDir.length));
+    const filepaths = paths.map(p => p.slice(this.config.siteDir.length));
 
     for (const filepath of filepaths) {
-      const realFilePath = this.realPathFor(filepath);
-
-      if (fs.existsSync(realFilePath)) {
+      if (fs.existsSync(this.realPathFor(filepath))) {
         this.#createFile(filepath);
       }
       else {
@@ -60,7 +55,8 @@ export class Runtime {
     }
 
     const resetSeen = new Set<string>();
-    for (const filepath of filepaths) {
+    for (let filepath of filepaths) {
+      if (filepath === '/_imlib/jsx-node.ts') filepath = '/imlibruntime/_jsx.ts';
       this.#resetDepTree(filepath, resetSeen);
     }
   }
@@ -97,7 +93,7 @@ export class Runtime {
   }
 
   realPathFor(filepath: string) {
-    return path.join(this.#siteDir, filepath);
+    return path.join(this.config.siteDir, filepath);
   }
 
   addDeps(requiredBy: string, requiring: string) {
