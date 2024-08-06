@@ -9,9 +9,9 @@
 
 ### Benefits
 
-1. TypeScript SSG
+1. Simple TypeScript SSG
 2. Custom JSX implementation (can return DOM nodes, strings, etc)
-3. Extremely fast and efficient
+3. Extremely fast and efficient (processes 1500+ files in ~700ms)
 
 ### Try it out
 
@@ -21,51 +21,7 @@
 4. Change something
 5. Reload the browser
 
-### Performance
-
-Given this repo:
-
-```
-immaculatalibrary.com$ scc
-───────────────────────────────────────────────────────────────────────────────
-Language                 Files     Lines   Blanks  Comments     Code Complexity
-───────────────────────────────────────────────────────────────────────────────
-Markdown                  1418     42537     3915         0    38622          0
-TypeScript                  98      5467      793        14     4660        368
-CSS                         24      1187      197         8      982          0
-JSON                         7      1672        0         0     1672          0
-TypeScript Typings           1        14        2         0       12          0
-YAML                         1        60       11         6       43          0
-gitignore                    1         2        0         0        2          0
-───────────────────────────────────────────────────────────────────────────────
-Total                     1550     50939     4918        28    45993        368
-───────────────────────────────────────────────────────────────────────────────
-Estimated Cost to Develop (organic) $1,504,602
-Estimated Schedule Effort (organic) 16.06 months
-Estimated People Required (organic) 8.32
-───────────────────────────────────────────────────────────────────────────────
-Processed 4259040 bytes, 4.259 megabytes (SI)
-───────────────────────────────────────────────────────────────────────────────
-```
-
-Initial startup time:
-
-```
-> imlib dev
-
-Debugger attached.
-Running on http://localhost:8080
-Time: 702 ms
-```
-
-After saving a file:
-
-```
-Rebuilding site...
-Time: 95 ms
-```
-
-### Full docs
+### Docs to eventually clean up
 
 1. **Structure:**  
    All files under `site` are processed and turned into the website.  
