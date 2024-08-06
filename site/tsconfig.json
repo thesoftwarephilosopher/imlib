@@ -5,10 +5,16 @@
       "ES2020",
       "DOM"
     ],
+    "noEmit": true,
+    "jsx": "react-native",
     "module": "CommonJS",
     "declaration": true,
-    "allowSyntheticDefaultImports": false,
-    "rootDir": "src",
+    "types": [
+      "node",
+      "../runtime.d.ts"
+    ],
+    "allowSyntheticDefaultImports": true,
+    "rootDir": ".",
     "moduleResolution": "node",
     "sourceMap": false,
     "outDir": "out",
@@ -25,8 +31,4 @@
     "noPropertyAccessFromIndexSignature": true,
     "skipLibCheck": true
   },
-  "exclude": [
-    "site",
-    "out"
-  ]
 }
