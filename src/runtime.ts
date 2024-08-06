@@ -24,11 +24,11 @@ export class Runtime {
   }
 
   build() {
-    this.#putFileIfNeeded('/imlib/jsx-browser.js', this.config.jsxContentBrowser ?? jsxDom);
-    this.#putFileIfNeeded('/imlib/jsx-node.js', this.config.jsxContentSsg ?? jsxStrings);
+    this.#putFileIfNeeded('/@imlib/jsx-browser.js', this.config.jsxContentBrowser ?? jsxDom);
+    this.#putFileIfNeeded('/@imlib/jsx-node.js', this.config.jsxContentSsg ?? jsxStrings);
 
     const processor = (
-      this.files.get('/imlib/processor.js')?.module?.require().default ??
+      this.files.get('/@imlib/processor.js')?.module?.require().default ??
       this.config.processor
     );
 

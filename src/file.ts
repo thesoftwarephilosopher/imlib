@@ -26,7 +26,7 @@ export function compileTSX(code: string, realFilePath?: string) {
   const options: sucrase.Options = {
     transforms: ['typescript', 'jsx'],
     jsxRuntime: 'automatic',
-    jsxImportSource: '/imlib',
+    jsxImportSource: '/@imlib',
     disableESTransforms: true,
     production: true,
   };
@@ -37,10 +37,10 @@ export function compileTSX(code: string, realFilePath?: string) {
   }
   const result = sucrase.transform(code, options);
   if (realFilePath) {
-    result.code = result.code.replace(/"\/imlib\/jsx-runtime"/g, `"/imlib/jsx-node.js"`);
+    result.code = result.code.replace(/"\/@imlib\/jsx-runtime"/g, `"/@imlib/jsx-node.js"`);
   }
   else {
-    result.code = result.code.replace(/"\/imlib\/jsx-runtime"/g, `"/imlib/jsx-browser.js"`);
+    result.code = result.code.replace(/"\/@imlib\/jsx-runtime"/g, `"/@imlib/jsx-browser.js"`);
   }
   return result;
 }
