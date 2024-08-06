@@ -3,12 +3,8 @@
 import { startDevServer } from './dev-server';
 import { generateFiles } from './file-generator';
 import { Runtime } from './runtime';
-import { processSite } from './ssp';
 
-const runtime = new Runtime({
-  siteDir: "site",
-  processor: processSite,
-});
+const runtime = new Runtime();
 
 const fns: Record<string, () => void> = {
   dev: () => startDevServer(runtime),

@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path/posix";
 import { convertTsExts, File } from "./file.js";
+import { processSite } from "./ssp.js";
 
 export type SiteProcessor = (files: Iterable<File>) => Map<string, Buffer | string>;
 
@@ -14,22 +15,31 @@ export class Runtime {
 
   handlers = new Map<string, (body: string) => string>();
 
-  constructor(private config: {
-    siteDir: string,
-    processor: SiteProcessor,
+  #siteDir;
+  #processor;
+  #jsxContentSsg: string | Buffer;
+  #jsxContentBrowser: string | Buffer;
+
+  constructor(config?: {
+    siteDir?: string,
+    processor?: SiteProcessor,
     jsxContentSsg?: string | Buffer,
     jsxContentBrowser?: string | Buffer,
   }) {
+    this.#siteDir = config?.siteDir ?? 'site';
     this.#loadDir('/');
+    this.#processor = config?.processor ?? processSite;
+    this.#jsxContentSsg = config?.jsxContentSsg ?? jsxStrings;
+    this.#jsxContentBrowser = config?.jsxContentBrowser ?? jsxDom;
   }
 
   build() {
-    this.#putFileIfNeeded('/@imlib/jsx-browser.ts', this.config.jsxContentBrowser ?? jsxDom);
-    this.#putFileIfNeeded('/@imlib/jsx-node.ts', this.config.jsxContentSsg ?? jsxStrings);
+    this.#putFileIfNeeded('/@imlib/jsx-browser.ts', this.#jsxContentBrowser ?? jsxDom);
+    this.#putFileIfNeeded('/@imlib/jsx-node.ts', this.#jsxContentSsg ?? jsxStrings);
 
     const processor = (
       this.files.get('/@imlib/processor.js')?.module?.require().default ??
-      this.config.processor
+      this.#processor
     );
 
     const start = Date.now();
@@ -39,7 +49,7 @@ export class Runtime {
   }
 
   pathsUpdated(...paths: string[]) {
-    const filepaths = paths.map(p => p.slice(this.config.siteDir.length));
+    const filepaths = paths.map(p => p.slice(this.#siteDir.length));
 
     for (const filepath of filepaths) {
       if (fs.existsSync(this.realPathFor(filepath))) {
@@ -94,7 +104,7 @@ export class Runtime {
   }
 
   realPathFor(filepath: string) {
-    return path.join(this.config.siteDir, filepath);
+    return path.join(this.#siteDir, filepath);
   }
 
   addDeps(requiredBy: string, requiring: string) {
