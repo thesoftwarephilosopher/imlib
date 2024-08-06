@@ -36,16 +36,18 @@ export class Runtime {
       jsxStrings
     );
 
+    const processor = (
+      this.files.get('/_imlib/processor.js')?.module?.require().default ??
+      this.config.processor
+    );
+
     const start = Date.now();
-    const outfiles = this.config.processor(this.files.values());
+    const outfiles = processor(this.files.values());
     console.log(`Time: ${Date.now() - start} ms`);
     return outfiles;
   }
 
   pathsUpdated(...paths: string[]) {
-    this.files.delete('/_imlib/jsx-browser.js');
-    this.files.delete('/_imlib/jsx-node.js');
-
     const filepaths = paths.map(p => p.slice(this.config.siteDir.length));
 
     for (const filepath of filepaths) {
