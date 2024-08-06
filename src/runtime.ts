@@ -46,7 +46,7 @@ export class Runtime {
         this.#createFile(filepath);
       }
       else {
-        this.files.delete(filepath);
+        this.files.delete(convertTsExts(filepath));
       }
     }
 
