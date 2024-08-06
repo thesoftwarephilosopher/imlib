@@ -24,20 +24,11 @@ export class Runtime {
   }
 
   build() {
-    this.#putFile('/imlibruntime/jsx.ts',
-      this.files.get('/_imlib/jsx-browser.js')?.content ??
-      this.config.jsxContentBrowser ??
-      jsxDom
-    );
-
-    this.#putFile('/imlibruntime/_jsx.ts',
-      this.files.get('/_imlib/jsx-node.js')?.content ??
-      this.config.jsxContentSsg ??
-      jsxStrings
-    );
+    this.#putFileIfNeeded('/imlib/jsx-browser.js', this.config.jsxContentBrowser ?? jsxDom);
+    this.#putFileIfNeeded('/imlib/jsx-node.js', this.config.jsxContentSsg ?? jsxStrings);
 
     const processor = (
-      this.files.get('/_imlib/processor.js')?.module?.require().default ??
+      this.files.get('/imlib/processor.js')?.module?.require().default ??
       this.config.processor
     );
 
@@ -60,8 +51,7 @@ export class Runtime {
     }
 
     const resetSeen = new Set<string>();
-    for (let filepath of filepaths) {
-      if (filepath === '/_imlib/jsx-node.ts') filepath = '/imlibruntime/_jsx.ts';
+    for (const filepath of filepaths) {
       this.#resetDepTree(filepath, resetSeen);
     }
   }
@@ -95,6 +85,12 @@ export class Runtime {
   #putFile(filepath: string, content: string | Buffer) {
     const file = new File(filepath, content, this);
     this.files.set(file.path, file);
+  }
+
+  #putFileIfNeeded(filepath: string, content: string | Buffer) {
+    if (!this.files.has(filepath)) {
+      this.#putFile(filepath, content);
+    }
   }
 
   realPathFor(filepath: string) {
