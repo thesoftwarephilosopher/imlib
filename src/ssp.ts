@@ -1,5 +1,4 @@
 import { File } from "./file.js";
-import { SiteProcessor } from "./runtime";
 
 export const postProcessors: Record<string, PostProcessor> = {
   html: hoistHtml,
@@ -36,20 +35,15 @@ export interface Outfile {
 export type ProcFn = (file: File, captureGroups: Record<string, string>) => Outfile | Outfile[];
 export type Processor = [RegExp, ProcFn];
 
-export const processors: Processor[] = [];
+export const defaultProcessors: Processor[] = [];
 
 export const skip: ProcFn = () => [];
 export const asIs: ProcFn = (f) => f;
 
-// TODO: move this check into processSite somehow
-if (!process.env['DEV']) {
-  processors.push([/^\/admin\//, skip]);
-}
+defaultProcessors.push([/\.md$/, skip]);
+defaultProcessors.push([/_.*\.js$/, skip]);
 
-processors.push([/\.md$/, skip]);
-processors.push([/_.*\.js$/, skip]);
-
-processors.push([/\/.*(?<slug>\[.+\]).*\.(?<ext>.+)\.js$/, (file, groups) => {
+defaultProcessors.push([/\/.*(?<slug>\[.+\]).*\.(?<ext>.+)\.js$/, (file, groups) => {
   const array = file.module!.require().default as [string, string][];
   return array.map(([slug, content]) => postProcess({
     path: file.path.slice(0, -3).replace(groups["slug"]!, slug),
@@ -57,14 +51,16 @@ processors.push([/\/.*(?<slug>\[.+\]).*\.(?<ext>.+)\.js$/, (file, groups) => {
   }));
 }]);
 
-processors.push([/\.(?<ext>.+)\.js$/, (file, groups) => postProcess({
+defaultProcessors.push([/\.(?<ext>.+)\.js$/, (file, groups) => postProcess({
   path: file.path.slice(0, -3),
   content: file.module!.require().default,
 })]);
 
-processors.push([/./, asIs]);
+defaultProcessors.push([/./, asIs]);
 
-export const processSite: SiteProcessor = (files) => {
+export type SiteProcessor = (files: Iterable<File>, processors?: Processor[]) => Map<string, Buffer | string>;
+
+export const processSite: SiteProcessor = (files, processors = defaultProcessors) => {
   const outfiles = new Map<string, Buffer | string>();
 
   for (const file of files) {

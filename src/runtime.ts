@@ -1,9 +1,7 @@
 import * as fs from "fs";
 import * as path from "path/posix";
 import { convertTsExts, File } from "./file.js";
-import { processSite } from "./ssp.js";
-
-export type SiteProcessor = (files: Iterable<File>) => Map<string, Buffer | string>;
+import { processSite, SiteProcessor } from "./ssp.js";
 
 const jsxDom = fs.readFileSync(__dirname + '/../src/jsx-dom.ts');
 const jsxStrings = fs.readFileSync(__dirname + '/../src/jsx-strings.ts');
