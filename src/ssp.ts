@@ -2,11 +2,11 @@ import { File } from "./file.js";
 import { SiteProcessor } from "./runtime";
 
 export const postProcessors: Record<string, PostProcessor> = {
-  html: hoist,
+  html: hoistHtml,
   json: JSON.stringify,
 };
 
-export function hoist(jsx: string) {
+export function hoistHtml(jsx: string) {
   const hoisted = new Set<string>();
   return (jsx
     .replace(/<script .+?><\/script>|<link .+?>/g, (s, s2) => {
