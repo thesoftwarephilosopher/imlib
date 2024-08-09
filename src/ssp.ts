@@ -40,9 +40,6 @@ export const defaultProcessors: Processor[] = [];
 export const skip: ProcFn = () => [];
 export const asIs: ProcFn = (f) => f;
 
-defaultProcessors.push([/\.md$/, skip]);
-defaultProcessors.push([/_.*\.js$/, skip]);
-
 defaultProcessors.push([/\/.*(?<slug>\[.+\]).*\.(?<ext>.+)\.js$/, (file, groups) => {
   const array = file.module!.require().default as [string, string][];
   return array.map(([slug, content]) => postProcess({
