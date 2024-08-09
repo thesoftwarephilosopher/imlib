@@ -26,7 +26,6 @@ export function postProcess(f: Outfile): Outfile {
   return f;
 }
 
-
 export interface Outfile {
   path: string;
   content: string | Buffer;
@@ -35,25 +34,29 @@ export interface Outfile {
 export type ProcFn = (file: File, captureGroups: Record<string, string>) => Outfile | Outfile[];
 export type Processor = [RegExp, ProcFn];
 
-export const defaultProcessors: Processor[] = [];
-
 export const skip: ProcFn = () => [];
 export const asIs: ProcFn = (f) => f;
 
-defaultProcessors.push([/\/.*(?<slug>\[.+\]).*\.(?<ext>.+)\.js$/, (file, groups) => {
+export const ProcessTsArrayFile: Processor = [/\/.*(?<slug>\[.+\]).*\.(?<ext>.+)\.js$/, (file, groups) => {
   const array = file.module!.require().default as [string, string][];
   return array.map(([slug, content]) => postProcess({
     path: file.path.slice(0, -3).replace(groups["slug"]!, slug),
     content,
   }));
-}]);
+}];
 
-defaultProcessors.push([/\.(?<ext>.+)\.js$/, (file, groups) => postProcess({
+export const ProcessTsFile: Processor = [/\.(?<ext>.+)\.js$/, (file, groups) => postProcess({
   path: file.path.slice(0, -3),
   content: file.module!.require().default,
-})]);
+})];
 
-defaultProcessors.push([/./, asIs]);
+export const ProcessAnyFile: Processor = [/./, asIs];
+
+export const defaultProcessors: Processor[] = [
+  ProcessTsArrayFile,
+  ProcessTsFile,
+  ProcessAnyFile,
+];
 
 export type SiteProcessor = (files: Iterable<File>, processors?: Processor[]) => Map<string, Buffer | string>;
 
