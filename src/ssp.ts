@@ -41,6 +41,7 @@ export const processors: Processor[] = [];
 export const skip: ProcFn = () => [];
 export const asIs: ProcFn = (f) => f;
 
+// TODO: move this check into processSite somehow
 if (!process.env['DEV']) {
   processors.push([/^\/admin\//, skip]);
 }
