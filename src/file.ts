@@ -1,5 +1,4 @@
-import * as sucrase from 'sucrase';
-import { pathToFileURL } from "url";
+import * as swc from '@swc/core';
 import { Module } from "./module";
 import { Runtime } from "./runtime";
 
@@ -29,19 +28,32 @@ export function compileTSX(code: string, realFilePath?: string, browserFilePath?
     prefix = '.' + '/..'.repeat(levels);
   }
 
-  const options: sucrase.Options = {
-    transforms: ['typescript', 'jsx'],
-    jsxRuntime: 'automatic',
-    jsxImportSource: '/@imlib',
-    disableESTransforms: true,
-    production: true,
+  const opts: swc.Options = {
+    sourceMaps: 'inline',
+    module: { type: 'es6' },
+    jsc: {
+      parser: {
+        syntax: 'typescript',
+        tsx: true,
+      },
+      target: 'esnext',
+      transform: {
+        react: {
+          runtime: 'automatic',
+          importSource: '/@imlib',
+          throwIfNamespace: false,
+        }
+      }
+    }
   };
+
   if (realFilePath) {
-    options.transforms.push('imports');
-    options.sourceMapOptions = { compiledFilename: realFilePath };
-    options.filePath = pathToFileURL(realFilePath).href;
+    opts.module!.type = 'commonjs';
+    opts.sourceFileName = realFilePath;
+    // options.sourceMapOptions = { compiledFilename: realFilePath };
+    // options.filePath = pathToFileURL(realFilePath).href;
   }
-  const result = sucrase.transform(code, options);
+  const result = swc.transformSync(code, opts);
   if (realFilePath) {
     result.code = result.code.replace(/"\/@imlib\/jsx-runtime"/g, `"/@imlib/jsx-node.js"`);
   }
