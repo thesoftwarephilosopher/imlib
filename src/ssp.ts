@@ -39,16 +39,16 @@ export const asIs: ProcFn = (f) => f;
 
 export const ProcessTsArrayFile: Processor = [/\/.*(?<slug>\[.+\]).*\.(?<ext>.+)\.js$/, (file, groups) => {
   const array = file.module!.require().default as [string, string][];
-  return array.map(([slug, content]) => postProcess({
-    path: file.path.slice(0, -3).replace(groups["slug"]!, slug),
-    content,
-  }));
+  return array.map(([slug, content]) => {
+    const filepath = file.path.replace(groups["slug"]!, slug);
+    return postProcess({ path: filepath.slice(0, -3), content });
+  });
 }];
 
-export const ProcessTsFile: Processor = [/\.(?<ext>.+)\.js$/, (file, groups) => postProcess({
-  path: file.path.slice(0, -3),
-  content: file.module!.require().default,
-})];
+export const ProcessTsFile: Processor = [/\.(?<ext>.+)\.js$/, (file, groups) => {
+  const content = file.module!.require().default;
+  return postProcess({ path: file.path.slice(0, -3), content });
+}];
 
 export const ProcessAnyFile: Processor = [/./, asIs];
 
