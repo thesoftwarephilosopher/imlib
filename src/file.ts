@@ -1,11 +1,13 @@
 import * as swc from '@swc/core';
 import { readFileSync } from 'fs';
-import { parse } from 'jsonc-parser';
 import { Module } from "./module";
 import { Runtime } from "./runtime";
 
-const tsconfig = parse(readFileSync('tsconfig.json').toString('utf8'));
-const mappedImports = tsconfig.compilerOptions.paths;
+"https://cdn.jsdelivr.net/npm/@swc/wasm-web@1.7.10/+esm"
+"https://cdn.jsdelivr.net/npm/eases@1.0.8/+esm"
+"https://cdn.jsdelivr.net/npm/markdown-it@13.0.2/+esm"
+
+const tsconfig = JSON.parse(readFileSync('package.json').toString('utf8'));
 
 export class File {
 
@@ -37,13 +39,24 @@ export function compileTSX(code: string, realFilePath?: string, browserFilePath?
     sourceMaps: 'inline',
     module: { type: 'es6' },
     plugin: (program) => {
-      if (mappedImports && browserFilePath) {
+      if (browserFilePath) {
         for (const imp of program.body) {
           if (imp.type === 'ImportDeclaration') {
-            const mapped = mappedImports[imp.source.value];
-            if (mapped) {
+            const dep = imp.source.value;
+            const version = (
+              tsconfig.devDependencies[dep] ??
+              tsconfig.dependencies[dep]
+            );
+            if (version) {
               delete imp.source.raw;
-              imp.source.value = mapped[0];
+              imp.source.value = `https://cdn.jsdelivr.net/npm/${dep}@${version}/+esm`;
+            }
+            else {
+              const typeDep = '@types/' + dep.replace(/^@(.+?)\/(.+)/, '$1__$2');
+              if (tsconfig.devDependencies[typeDep]) {
+                delete imp.source.raw;
+                imp.source.value = `https://cdn.jsdelivr.net/npm/${dep}/+esm`;
+              }
             }
           }
         }
