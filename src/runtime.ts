@@ -50,6 +50,7 @@ export class Runtime {
   }
 
   rebuildAll() {
+    this.compiler = new Compiler();
     this.#loadDir('/');
   }
 
