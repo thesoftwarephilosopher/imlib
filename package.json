@@ -24,7 +24,8 @@
   "homepage": "https://github.com/sdegutis/imlib#readme",
   "dependencies": {
     "@swc/core": "^1.7.10",
-    "chokidar": "^3.6.0"
+    "chokidar": "^3.6.0",
+    "jsonc-parser": "^3.3.1"
   },
   "devDependencies": {
     "@types/chokidar": "^1.7.5",

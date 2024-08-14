@@ -1,6 +1,11 @@
 import * as swc from '@swc/core';
+import { readFileSync } from 'fs';
+import { parse } from 'jsonc-parser';
 import { Module } from "./module";
 import { Runtime } from "./runtime";
+
+const tsconfig = parse(readFileSync('tsconfig.json').toString('utf8'));
+const mappedImports = tsconfig.compilerOptions.paths;
 
 export class File {
 
@@ -31,6 +36,20 @@ export function compileTSX(code: string, realFilePath?: string, browserFilePath?
   const opts: swc.Options = {
     sourceMaps: 'inline',
     module: { type: 'es6' },
+    plugin: (program) => {
+      if (mappedImports && browserFilePath) {
+        for (const imp of program.body) {
+          if (imp.type === 'ImportDeclaration') {
+            const mapped = mappedImports[imp.source.value];
+            if (mapped) {
+              delete imp.source.raw;
+              imp.source.value = mapped[0];
+            }
+          }
+        }
+      }
+      return program;
+    },
     jsc: {
       parser: {
         syntax: 'typescript',
