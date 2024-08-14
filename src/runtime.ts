@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path/posix";
+import { Compiler } from "./compiler.js";
 import { convertTsExts, File } from "./file.js";
 import { processSite, SiteProcessor } from "./ssp.js";
 
@@ -17,6 +18,8 @@ export class Runtime {
   #processor;
   #jsxContentSsg: string | Buffer;
   #jsxContentBrowser: string | Buffer;
+
+  compiler = new Compiler();
 
   constructor(config?: {
     siteDir?: string,

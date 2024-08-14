@@ -1,9 +1,17 @@
 import * as swc from '@swc/core';
 import { readFileSync } from 'fs';
 
+export class Compiler {
+
+  compile(code: string, realFilePath?: string, browserFilePath?: string) {
+    return compileTSX(code, realFilePath, browserFilePath);
+  }
+
+}
+
 const tsconfig = JSON.parse(readFileSync('package.json').toString('utf8'));
 
-export function compileTSX(code: string, realFilePath?: string, browserFilePath?: string) {
+function compileTSX(code: string, realFilePath?: string, browserFilePath?: string) {
   let prefix = '';
   if (browserFilePath && !browserFilePath.startsWith('/@imlib/')) {
     const levels = browserFilePath.match(/\//g)!.length - 1;

@@ -1,4 +1,3 @@
-import { compileTSX } from "./compiler.js";
 import { Module } from "./module";
 import { Runtime } from "./runtime";
 
@@ -14,7 +13,7 @@ export class File {
     if (path.match(/\.tsx?$/)) {
       const code = content.toString('utf8');
       this.module = new Module(code, this.path, runtime);
-      this.content = compileTSX(code, undefined, path).code;
+      this.content = runtime.compiler.compile(code, undefined, path).code;
       this.path = convertTsExts(path);
     }
   }

@@ -1,7 +1,6 @@
 import * as path from "path/posix";
 import { pathToFileURL } from "url";
 import * as vm from "vm";
-import { compileTSX } from "./compiler.js";
 import { Runtime } from "./runtime";
 
 export class Module {
@@ -30,7 +29,7 @@ export class Module {
   #run() {
     if (!this.#fn) {
       const realFilePath = this.runtime.realPathFor(this.filepath);
-      const transformed = compileTSX(this.content, realFilePath);
+      const transformed = this.runtime.compiler.compile(this.content, realFilePath);
       const sourceCode = transformed.code;
       // const sourceMapBase64 = Buffer.from(JSON.stringify(transformed.sourceMap)).toString('base64url');
       // const sourceMap = `\n//# sourceMappingURL=data:application/json;base64,${sourceMapBase64}`;
