@@ -3,10 +3,6 @@ import { readFileSync } from 'fs';
 import { Module } from "./module";
 import { Runtime } from "./runtime";
 
-"https://cdn.jsdelivr.net/npm/@swc/wasm-web@1.7.10/+esm"
-"https://cdn.jsdelivr.net/npm/eases@1.0.8/+esm"
-"https://cdn.jsdelivr.net/npm/markdown-it@13.0.2/+esm"
-
 const tsconfig = JSON.parse(readFileSync('package.json').toString('utf8'));
 
 export class File {
