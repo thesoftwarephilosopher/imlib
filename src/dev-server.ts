@@ -40,6 +40,9 @@ export function startDevServer(runtime: Runtime, config?: { port?: number }) {
     }, 100);
   };
 
+  (chokidar.watch('package.json', { ignoreInitial: true, cwd: process.cwd() })
+    .on('change', pathUpdated));
+
   (chokidar.watch('site', { ignoreInitial: true, cwd: process.cwd() })
     .on('add', pathUpdated)
     .on('change', pathUpdated)

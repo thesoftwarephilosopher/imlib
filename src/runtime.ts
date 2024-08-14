@@ -25,7 +25,7 @@ export class Runtime {
     jsxContentBrowser?: string | Buffer,
   }) {
     this.#siteDir = config?.siteDir ?? 'site';
-    this.#loadDir('/');
+    this.rebuildAll();
     this.#processor = config?.processor ?? processSite;
     this.#jsxContentSsg = config?.jsxContentSsg ?? jsxStrings;
     this.#jsxContentBrowser = config?.jsxContentBrowser ?? jsxDom;
@@ -46,7 +46,17 @@ export class Runtime {
     return outfiles;
   }
 
+  rebuildAll() {
+    this.#loadDir('/');
+  }
+
   pathsUpdated(...paths: string[]) {
+    if (paths.includes('package.json')) {
+      console.log('rebuilding all')
+      this.rebuildAll();
+      return;
+    }
+
     const filepaths = paths.map(p => p.slice(this.#siteDir.length));
 
     for (const filepath of filepaths) {
