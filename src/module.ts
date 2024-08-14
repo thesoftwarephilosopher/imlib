@@ -1,7 +1,7 @@
 import * as path from "path/posix";
 import { pathToFileURL } from "url";
 import * as vm from "vm";
-import { compileTSX } from "./file";
+import { compileTSX } from "./compiler.js";
 import { Runtime } from "./runtime";
 
 export class Module {
