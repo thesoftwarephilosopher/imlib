@@ -1,9 +1,9 @@
 import * as swc from '@swc/core';
 import { readFileSync } from 'fs';
 
-const tsconfig = JSON.parse(readFileSync('package.json').toString('utf8'));
-
 export class Compiler {
+
+  tsconfig = JSON.parse(readFileSync('package.json').toString('utf8'));
 
   compile(code: string, realFilePath?: string, browserFilePath?: string) {
     let prefix = '';
@@ -21,8 +21,8 @@ export class Compiler {
             if (imp.type === 'ImportDeclaration') {
               const dep = imp.source.value;
               const version = (
-                tsconfig.devDependencies[dep] ??
-                tsconfig.dependencies[dep]
+                this.tsconfig.devDependencies[dep] ??
+                this.tsconfig.dependencies[dep]
               );
               if (version) {
                 delete imp.source.raw;
@@ -30,7 +30,7 @@ export class Compiler {
               }
               else {
                 const typeDep = '@types/' + dep.replace(/^@(.+?)\/(.+)/, '$1__$2');
-                if (tsconfig.devDependencies[typeDep]) {
+                if (this.tsconfig.devDependencies[typeDep]) {
                   delete imp.source.raw;
                   imp.source.value = `https://cdn.jsdelivr.net/npm/${dep}/+esm`;
                 }
