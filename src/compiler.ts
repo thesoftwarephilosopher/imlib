@@ -16,29 +16,7 @@ export class Compiler {
       sourceMaps: 'inline',
       module: { type: 'es6' },
       plugin: (program) => {
-        if (browserFilePath) {
-          for (const imp of program.body) {
-            if (imp.type === 'ImportDeclaration') {
-              const dep = imp.source.value;
-              const version = (
-                this.packageJson.devDependencies[dep] ??
-                this.packageJson.dependencies[dep]
-              );
-              if (version) {
-                delete imp.source.raw;
-                imp.source.value = `https://cdn.jsdelivr.net/npm/${dep}@${version}/+esm`;
-              }
-              else {
-                const typeDep = '@types/' + dep.replace(/^@(.+?)\/(.+)/, '$1__$2');
-                if (this.packageJson.devDependencies[typeDep]) {
-                  delete imp.source.raw;
-                  imp.source.value = `https://cdn.jsdelivr.net/npm/${dep}/+esm`;
-                }
-              }
-            }
-          }
-        }
-        return program;
+        return this.#renameImports(program, browserFilePath);
       },
       jsc: {
         parser: {
@@ -70,6 +48,32 @@ export class Compiler {
       result.code = result.code.replace(/"\/@imlib\/jsx-runtime"/g, `"${prefix}/@imlib/jsx-browser.js"`);
     }
     return result;
+  }
+
+  #renameImports(program: swc.Program, browserFilePath?: string): swc.Program {
+    if (browserFilePath) {
+      for (const imp of program.body) {
+        if (imp.type === 'ImportDeclaration') {
+          const dep = imp.source.value;
+          const version = (
+            this.packageJson.devDependencies[dep] ??
+            this.packageJson.dependencies[dep]
+          );
+          if (version) {
+            delete imp.source.raw;
+            imp.source.value = `https://cdn.jsdelivr.net/npm/${dep}@${version}/+esm`;
+          }
+          else {
+            const typeDep = '@types/' + dep.replace(/^@(.+?)\/(.+)/, '$1__$2');
+            if (this.packageJson.devDependencies[typeDep]) {
+              delete imp.source.raw;
+              imp.source.value = `https://cdn.jsdelivr.net/npm/${dep}/+esm`;
+            }
+          }
+        }
+      }
+    }
+    return program;
   }
 
 }
