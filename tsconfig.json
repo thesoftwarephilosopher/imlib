@@ -24,9 +24,5 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "skipLibCheck": true
-  },
-  "exclude": [
-    "site",
-    "out"
-  ]
+  }
 }
