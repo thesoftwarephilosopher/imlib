@@ -1,5 +1,6 @@
 declare module JSX {
   export type ElementAttrs = {
+    [tag: string]: string | boolean | Function;
     id?: string;
     class?: string;
     style?: string;
