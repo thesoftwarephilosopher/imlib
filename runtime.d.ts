@@ -22,13 +22,17 @@ declare module JSX {
   export type FormAttrs = ElementAttrs & { method: string; action: string };
   export type ButtonAttrs = ElementAttrs & { type?: string };
   export type InputAttrs = ElementAttrs & { type?: string; name?: string; value?: string; checked?: boolean; autofocus?: boolean; placeholder?: string; oninput?: string | Function; autocomplete?: string };
+  export type TextAreaAttrs = ElementAttrs & { name?: string; rows?: string };
+  export type SelectAttrs = ElementAttrs & { name?: string; onchange?: string | Function };
+  export type OptionAttrs = ElementAttrs & { value?: string; selected?: boolean };
+  export type IFrameAttrs = ElementAttrs & { src: string; allowfullscreen?: boolean | 'allowfullscreen' | ''; width?: string; height?: string; frameborder?: string; loading?: 'lazy'; allow?: string };
 
   type IntrinsicElements = {
     [tag: string]: Record<string, string | boolean | Function>;
-    meta: MetaAttrs, link: LinkAttrs, script: ScriptAttrs,
+    meta: MetaAttrs, link: LinkAttrs, script: ScriptAttrs, iframe: IFrameAttrs,
     a: AnchorAttrs, b: ElementAttrs, span: ElementAttrs, em: ElementAttrs, img: ImgAttrs,
     div: ElementAttrs, p: ElementAttrs, main: ElementAttrs, blockquote: ElementAttrs,
-    form: FormAttrs, button: ButtonAttrs, input: InputAttrs,
+    form: FormAttrs, button: ButtonAttrs, input: InputAttrs, textarea: TextAreaAttrs, select: SelectAttrs, option: OptionAttrs,
     h1: ElementAttrs, h2: ElementAttrs, h3: ElementAttrs, h4: ElementAttrs, h5: ElementAttrs, h6: ElementAttrs,
     hr: ElementAttrs, br: ElementAttrs,
     li: ElementAttrs, ul: ElementAttrs, ol: ElementAttrs,
