@@ -6,9 +6,10 @@ declare module JSX {
     title?: string;
     innerHTML?: string;
     hidden?: boolean;
+    onclick?: string | Function,
   };
 
-  export type AnchorAttrs = ElementAttrs & { href?: string; rel?: 'noopener'; target?: string; onclick?: string | Function; };
+  export type AnchorAttrs = ElementAttrs & { href?: string; rel?: 'noopener'; target?: string };
   export type MetaAttrs = { 'http-equiv'?: string; content?: string; name?: string; charset?: string; property?: string; };
   export type LinkAttrs = { href: string } & (
     { rel: 'stylesheet' } |
@@ -17,18 +18,24 @@ declare module JSX {
     { rel: 'preload'; as: 'font'; type: 'font/woff'; crossorigin: boolean } |
     { rel: 'manifest' });
   export type ScriptAttrs = ElementAttrs & { type?: 'module'; src?: string };
+  export type ImgAttrs = ElementAttrs & { src: string; loading?: 'lazy', alt?: '' };
+  export type FormAttrs = ElementAttrs & { method: string; action: string };
+  export type ButtonAttrs = ElementAttrs & { type?: string };
+  export type InputAttrs = ElementAttrs & { type?: string; name?: string; value?: string; checked?: boolean; autofocus?: boolean; placeholder?: string; oninput?: string | Function; autocomplete?: string };
 
   type IntrinsicElements = {
     [tag: string]: Record<string, string | boolean | Function>;
     meta: MetaAttrs, link: LinkAttrs, script: ScriptAttrs,
-    a: AnchorAttrs, b: ElementAttrs,
-    div: ElementAttrs, p: ElementAttrs,
+    a: AnchorAttrs, b: ElementAttrs, span: ElementAttrs, em: ElementAttrs, img: ImgAttrs,
+    div: ElementAttrs, p: ElementAttrs, main: ElementAttrs, blockquote: ElementAttrs,
+    form: FormAttrs, button: ButtonAttrs, input: InputAttrs,
     h1: ElementAttrs, h2: ElementAttrs, h3: ElementAttrs, h4: ElementAttrs, h5: ElementAttrs, h6: ElementAttrs,
     hr: ElementAttrs, br: ElementAttrs,
+    li: ElementAttrs, ul: ElementAttrs, ol: ElementAttrs,
   };
+
   export type Element = HTMLElement | SVGElement | DocumentFragment | string;
-  export type Component<T extends Record<string, any> = {}> =
-    (attrs: T, children: any) => Element;
+  export type Component<T extends Record<string, any> = {}> = (attrs: T, children: any) => Element;
 }
 
 type FsFile = {
