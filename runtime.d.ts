@@ -20,19 +20,11 @@ declare module JSX {
 
   type IntrinsicElements = {
     [tag: string]: Record<string, string | boolean | Function>;
-    meta: MetaAttrs,
-    link: LinkAttrs,
-    a: AnchorAttrs,
-    b: ElementAttrs,
-    div: ElementAttrs,
-    h1: ElementAttrs,
-    h2: ElementAttrs,
-    h3: ElementAttrs,
-    h4: ElementAttrs,
-    h5: ElementAttrs,
-    h6: ElementAttrs,
-    p: ElementAttrs,
-    script: ScriptAttrs,
+    meta: MetaAttrs, link: LinkAttrs, script: ScriptAttrs,
+    a: AnchorAttrs, b: ElementAttrs,
+    div: ElementAttrs, p: ElementAttrs,
+    h1: ElementAttrs, h2: ElementAttrs, h3: ElementAttrs, h4: ElementAttrs, h5: ElementAttrs, h6: ElementAttrs,
+    hr: ElementAttrs, br: ElementAttrs,
   };
   export type Element = HTMLElement | SVGElement | DocumentFragment | string;
   export type Component<T extends Record<string, any> = {}> =
