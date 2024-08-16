@@ -21,7 +21,7 @@ declare module JSX {
     { rel: 'manifest' });
   export type ScriptAttrs = ElementAttrs & { type?: 'module'; src?: string };
   export type ImgAttrs = ElementAttrs & { src: string; loading?: 'lazy', alt?: '' };
-  export type FormAttrs = ElementAttrs & { method: string; action: string };
+  export type FormAttrs = ElementAttrs & { method?: string; action?: string };
   export type ButtonAttrs = ElementAttrs & { type?: string };
   export type InputAttrs = ElementAttrs & { type?: string; name?: string; value?: string; checked?: boolean; autofocus?: boolean; placeholder?: string; oninput?: string | Function; autocomplete?: string };
   export type TextAreaAttrs = ElementAttrs & { name?: string; rows?: string };
