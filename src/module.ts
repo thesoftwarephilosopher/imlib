@@ -8,11 +8,15 @@ export class Module {
   #fn: (() => void) | undefined;
   #exports: object | undefined;
 
+  source;
+
   constructor(
     private content: string,
     public filepath: string,
     private runtime: Runtime
-  ) { }
+  ) {
+    this.source = content;
+  }
 
   require(): any {
     if (!this.#exports) {

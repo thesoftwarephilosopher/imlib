@@ -52,6 +52,12 @@ declare module JSX {
 type FsFile = {
   path: string;
   content: Buffer;
+  module?: FsModule;
+};
+
+type FsModule = {
+  require(): any;
+  source: string;
 };
 
 declare module '*/' {
