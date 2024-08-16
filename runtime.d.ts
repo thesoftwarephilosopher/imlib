@@ -9,6 +9,7 @@ declare module JSX {
     onclick?: string | Function,
   };
 
+  export type HtmlAttrs = { lang?: string };
   export type AnchorAttrs = ElementAttrs & { href?: string; rel?: 'noopener'; target?: string };
   export type MetaAttrs = { 'http-equiv'?: string; content?: string; name?: string; charset?: string; property?: string; };
   export type LinkAttrs = { href: string } & (
@@ -25,17 +26,22 @@ declare module JSX {
   export type TextAreaAttrs = ElementAttrs & { name?: string; rows?: string };
   export type SelectAttrs = ElementAttrs & { name?: string; onchange?: string | Function };
   export type OptionAttrs = ElementAttrs & { value?: string; selected?: boolean };
+  export type OptgroupAttrs = ElementAttrs & { label: string };
   export type IFrameAttrs = ElementAttrs & { src: string; allowfullscreen?: boolean | 'allowfullscreen' | ''; width?: string; height?: string; frameborder?: string; loading?: 'lazy'; allow?: string };
+  export type SvgAttrs = ElementAttrs & { viewBox: string; height?: string };
+  export type PathAttrs = ElementAttrs & { d: string };
 
   type IntrinsicElements = {
     [tag: string]: Record<string, string | boolean | Function>;
-    meta: MetaAttrs, link: LinkAttrs, script: ScriptAttrs, iframe: IFrameAttrs,
-    a: AnchorAttrs, b: ElementAttrs, span: ElementAttrs, em: ElementAttrs, img: ImgAttrs,
-    div: ElementAttrs, p: ElementAttrs, main: ElementAttrs, blockquote: ElementAttrs,
-    form: FormAttrs, button: ButtonAttrs, input: InputAttrs, textarea: TextAreaAttrs, select: SelectAttrs, option: OptionAttrs,
+    html: HtmlAttrs, head: ElementAttrs, body: ElementAttrs, title: {},
+    meta: MetaAttrs, link: LinkAttrs, script: ScriptAttrs, iframe: IFrameAttrs, style: {},
+    a: AnchorAttrs, b: ElementAttrs, i: ElementAttrs, span: ElementAttrs, em: ElementAttrs, small: ElementAttrs,
+    img: ImgAttrs, hr: ElementAttrs, br: ElementAttrs,
+    div: ElementAttrs, p: ElementAttrs, blockquote: ElementAttrs, li: ElementAttrs, ul: ElementAttrs, ol: ElementAttrs,
+    header: ElementAttrs, footer: ElementAttrs, main: ElementAttrs, section: ElementAttrs, aside: ElementAttrs, nav: ElementAttrs, details: ElementAttrs, summary: ElementAttrs,
+    form: FormAttrs, button: ButtonAttrs, input: InputAttrs, textarea: TextAreaAttrs, select: SelectAttrs, option: OptionAttrs, label: ElementAttrs, optgroup: OptgroupAttrs,
     h1: ElementAttrs, h2: ElementAttrs, h3: ElementAttrs, h4: ElementAttrs, h5: ElementAttrs, h6: ElementAttrs,
-    hr: ElementAttrs, br: ElementAttrs,
-    li: ElementAttrs, ul: ElementAttrs, ol: ElementAttrs,
+    svg: SvgAttrs, path: PathAttrs,
   };
 
   export type Element = HTMLElement | SVGElement | DocumentFragment | string;
