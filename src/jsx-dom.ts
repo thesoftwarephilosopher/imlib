@@ -23,7 +23,10 @@ export const jsx = (tag: string | Function, fullAttrs: Record<string, any>) => {
   pushChildren(el, getGoodChildren(children));
 
   for (const [key, val] of Object.entries(attrs ?? {})) {
-    if (isSvg) {
+    if (key.startsWith('data-')) {
+      el.dataset[key.slice(5)] = val;
+    }
+    else if (isSvg) {
       const jsKey = key.replace(/-\w/, (s) => `${s.toUpperCase()}`);
       el.setAttribute(jsKey, val);
     }
