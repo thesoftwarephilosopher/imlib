@@ -2,7 +2,7 @@ declare module JSX {
   type EventHandler<T extends Event> = (e: T) => any;
 
   export type ElementAttrs = {
-    [tag: string]: string | boolean | EventHandler<Event>;
+    [tag: string]: string | boolean | EventHandler<any>;
     id?: string;
     class?: string;
     style?: string;
