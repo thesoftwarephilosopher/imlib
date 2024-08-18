@@ -28,7 +28,6 @@ export const jsx = (tag: string | Function, fullAttrs: Record<string, any>) => {
     }
     else if (isSvg) {
       const jsKey = key.replace(/-\w/, (s) => `${s.toUpperCase()}`);
-      console.log('setting href', el, jsKey, val)
       el.setAttribute(jsKey, val);
     }
     else {
