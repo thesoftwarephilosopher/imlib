@@ -1,5 +1,6 @@
 import * as chokidar from 'chokidar';
 import * as http from "http";
+import * as mimetypes from 'mime-types';
 import * as path from 'path';
 import { Runtime } from './runtime';
 
@@ -81,17 +82,21 @@ class Server {
         return;
       }
 
-      const content = (
-        this.files?.get(url) ??
-        this.files?.get(path.posix.join(url, 'index.html'))
+      const getFile = (url: string) => {
+        const content = this.files?.get(url);
+        return content && { url, blob: content };
+      }
+
+      const found = (
+        getFile(url) ??
+        getFile(path.posix.join(url, 'index.html'))
       );
 
-      if (content !== undefined) {
+      if (found) {
         res.statusCode = 200;
-        if (url.endsWith('.js')) {
-          res.setHeader('content-type', 'text/javascript');
-        }
-        res.end(content);
+        const contentType = mimetypes.contentType(path.extname(found.url));
+        res.setHeader('content-type', contentType || 'application/octet-stream');
+        res.end(found.blob);
       }
       else {
         res.statusCode = 404;
