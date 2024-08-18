@@ -1,6 +1,6 @@
 {
   "name": "@imlib/core",
-  "version": "2.5.5",
+  "version": "2.5.6",
   "main": "out/index.js",
   "bin": {
     "imlib": "out/cli.js"
