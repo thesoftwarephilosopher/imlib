@@ -1,6 +1,9 @@
 declare module JSX {
+  type EventHandler<T extends Event> = Function;
+  // type EventHandler<T extends Event> = (e: T) => (any | void);
+
   export type ElementAttrs = {
-    [tag: string]: string | boolean | ((e: Event) => any);
+    [tag: string]: string | boolean | EventHandler;
     id?: string;
     class?: string;
     style?: string;
@@ -8,21 +11,21 @@ declare module JSX {
     innerHTML?: string;
     hidden?: boolean;
 
-    onclick?: string | ((e: MouseEvent) => any),
-    onmousedown?: string | ((e: MouseEvent) => any),
-    onmouseenter?: string | ((e: MouseEvent) => any),
-    onmouseleave?: string | ((e: MouseEvent) => any),
-    onmousemove?: string | ((e: MouseEvent) => any),
-    onmouseover?: string | ((e: MouseEvent) => any),
-    onmouseup?: string | ((e: MouseEvent) => any),
+    onclick?: string | EventHandler<MouseEvent>,
+    onmousedown?: string | EventHandler<MouseEvent>,
+    onmouseenter?: string | EventHandler<MouseEvent>,
+    onmouseleave?: string | EventHandler<MouseEvent>,
+    onmousemove?: string | EventHandler<MouseEvent>,
+    onmouseover?: string | EventHandler<MouseEvent>,
+    onmouseup?: string | EventHandler<MouseEvent>,
 
-    oninput?: string | ((e: Event) => any),
-    onchange?: string | ((e: Event) => any),
+    oninput?: string | EventHandler<Event>,
+    onchange?: string | EventHandler<Event>,
 
-    onkeydown?: string | ((e: KeyboardEvent) => any),
-    onkeyup?: string | ((e: KeyboardEvent) => any),
+    onkeydown?: string | EventHandler<KeyboardEvent>,
+    onkeyup?: string | EventHandler<KeyboardEvent>,
 
-    onload?: string | ((e: Event) => any),
+    onload?: string | EventHandler<Event>,
   };
 
   export type HtmlAttrs = { lang?: string };
