@@ -1,8 +1,10 @@
-declare module JSX {
+declare namespace JSX {
   type EventHandler<T extends Event> = (e: T) => any;
 
   export type ElementAttrs = {
-    [tag: string]: string | boolean | EventHandler<any>;
+
+    [attr: string]: string | boolean | EventHandler<any>;
+
     id?: string;
     class?: string;
     style?: string;
@@ -25,6 +27,7 @@ declare module JSX {
     onkeyup?: string | EventHandler<KeyboardEvent>,
 
     onload?: string | EventHandler<Event>,
+
   };
 
   export type HtmlAttrs = { lang?: string };
@@ -50,7 +53,9 @@ declare module JSX {
   export type PathAttrs = ElementAttrs & { d?: string };
 
   type IntrinsicElements = {
+
     [tag: string]: Record<string, string | boolean | Function>;
+
     html: HtmlAttrs, head: ElementAttrs, body: ElementAttrs, title: {},
     meta: MetaAttrs, link: LinkAttrs, script: ScriptAttrs, iframe: IFrameAttrs, style: {},
     a: AnchorAttrs, b: ElementAttrs, i: ElementAttrs, span: ElementAttrs, em: ElementAttrs, small: ElementAttrs,
@@ -60,6 +65,7 @@ declare module JSX {
     form: FormAttrs, button: ButtonAttrs, input: InputAttrs, textarea: TextAreaAttrs, select: SelectAttrs, option: OptionAttrs, label: ElementAttrs, optgroup: OptgroupAttrs,
     h1: ElementAttrs, h2: ElementAttrs, h3: ElementAttrs, h4: ElementAttrs, h5: ElementAttrs, h6: ElementAttrs,
     svg: SvgAttrs, path: PathAttrs,
+
   };
 
   export type Element = HTMLElement | SVGElement | DocumentFragment | string;
