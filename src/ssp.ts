@@ -1,5 +1,3 @@
-import * as fs from "fs";
-import * as path from "path";
 import { File } from "./file.js";
 
 /** @deprecated */
@@ -94,22 +92,3 @@ export const processSite: SiteProcessor = (files, processors = defaultProcessors
 
   return outfiles;
 };
-
-/**
- * Place all files under `from` into `to` in the emitted website.
- * @param from pwd-relative dir to emit files from, e.g. "node_modules/@tabler/icons-sprite/dist/" or "site/some-data/"
- * @param to absolute out dir to emit all files to, e.g. "/vendor/tabler-sprites/"
- * @param out a map to place files into (e.g. output of `processSite`)
- */
-export function vendor(from: string, to: string, out: Map<string, string | Buffer>) {
-  const all = fs.readdirSync(from, { recursive: true, encoding: 'utf8' });
-  for (const base of all) {
-    const full = path.join(from, base);
-    const inpath = full.split(path.sep).join(path.posix.sep);
-    if (fs.statSync(inpath).isFile()) {
-      const content = fs.readFileSync(inpath);
-      const outpath = path.posix.join('/', to, ...base.split(path.sep));
-      out.set(outpath, content);
-    }
-  }
-}
