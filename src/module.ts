@@ -1,6 +1,4 @@
 import * as path from "path/posix";
-import { pathToFileURL } from "url";
-import * as vm from "vm";
 import { Runtime } from "./runtime";
 
 export class Module {
@@ -41,9 +39,7 @@ export class Module {
       // this.content = sourceCode + sourceMap;
       this.content = sourceCode;
 
-      const fn = vm.compileFunction(this.content, ['require', 'exports'], {
-        filename: pathToFileURL(realFilePath).href,
-      });
+      const fn = new Function('require', 'exports', this.content);
 
       const require = (path: string) => this.#require(path);
       this.#fn = () => fn(require, this.#exports);
