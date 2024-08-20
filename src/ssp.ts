@@ -36,7 +36,7 @@ export const processSite: SiteProcessor = (files) => {
       const exportedArray = file.module!.require().default as [string, string][];
       producedFiles = exportedArray.map(([name, content]) => {
         const filepath = file.path.replace(slug, name);
-        return { path: filepath, content, special: { ext } };
+        return { path: filepath, content, dynamic: { ext } };
       });
     }
     else if (match = isSingleFile(file.path)) {
