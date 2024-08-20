@@ -16,46 +16,31 @@ function hoistHtml(jsx: string) {
 const isArrayFile = matcher<'ext' | 'slug'>(/\/.*(?<slug>\[.+\]).*(?<ext>\..+)\.js$/);
 const isSingleFile = matcher<'ext'>(/(?<ext>\..+)\.js$/);
 
-export type SiteProcessor = (files: Iterable<FsFile>) => Map<string, Buffer | string>;
+function processContent(content: any, ext: string) {
+  const fn = contentProcessors[ext];
+  return fn ? fn(content) : content;
+}
+
+export type InFiles = ReturnType<Map<string, FsFile>['values']>;
+export type SiteProcessor = (files: InFiles) => Map<string, Buffer | string>;
 
 export const processSite: SiteProcessor = (files) => {
   const outfiles = new Map<string, Buffer | string>();
 
   for (const file of files) {
-    let producedFiles: {
-      path: string,
-      content: string | Buffer,
-      dynamic?: {
-        ext: string,
-      },
-    }[] | undefined;
-
     let match;
     if (match = isArrayFile(file.path)) {
-      const { slug, ext } = match;
       const exportedArray = file.module!.require().default as [string, string][];
-      producedFiles = exportedArray.map(([name, content]) => {
-        const filepath = file.path.replace(slug, name);
-        return { path: filepath, content, dynamic: { ext } };
-      });
+      for (const [name, content] of exportedArray) {
+        const filepath = file.path.replace(match.slug, name);
+        outfiles.set(filepath.slice(0, -3), processContent(content, match.ext));
+      }
     }
     else if (match = isSingleFile(file.path)) {
-      const { ext } = match;
-      const content = file.module!.require().default;
-      producedFiles = [{ path: file.path, content, dynamic: { ext } }];
+      const exportedContent = file.module!.require().default;
+      outfiles.set(file.path.slice(0, -3), processContent(exportedContent, match.ext));
     }
     else {
-      producedFiles = [file];
-    }
-
-    for (const file of producedFiles) {
-      if (file.dynamic) {
-        file.path = file.path.slice(0, -3);
-
-        const fn = contentProcessors[file.dynamic.ext];
-        if (fn) file.content = fn(file.content);
-      }
-
       outfiles.set(file.path, file.content);
     }
   }
