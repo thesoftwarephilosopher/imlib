@@ -1,4 +1,3 @@
-import * as path from "path";
 import { File } from "./file.js";
 
 export const contentProcessors: Record<string, (s: any) => string> = {
