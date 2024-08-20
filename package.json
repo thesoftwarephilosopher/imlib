@@ -15,7 +15,7 @@
   },
   "keywords": [],
   "author": "Steven Degutis",
-  "license": "MIT",
+  "license": "",
   "description": "Simple TypeScript/JSX SSG",
   "bugs": {
     "url": "https://github.com/sdegutis/imlib/issues"
