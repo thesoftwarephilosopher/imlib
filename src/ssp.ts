@@ -30,7 +30,7 @@ export const processSite: SiteProcessor = (files) => {
   for (const file of files) {
     let match;
     if (match = isArrayFile(file.path)) {
-      const exportedArray = file.module!.require().default as [string, string][];
+      const exportedArray = file.module!.require().default as [string, any][];
       for (const [name, content] of exportedArray) {
         const filepath = file.path.replace(match.slug, name);
         outfiles.set(filepath.slice(0, -3), processContent(content, match.ext));
