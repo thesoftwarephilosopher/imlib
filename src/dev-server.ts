@@ -51,6 +51,16 @@ export function startDevServer(runtime: Runtime, config?: { port?: number }) {
     .on('unlink', pathUpdated));
 }
 
+function __hot_reload () {
+  const eventSource = new EventSource('/hot-reload');
+  eventSource.onmessage = (event) => {
+    const {type} = JSON.parse(event.data)
+    if (type === "reload") {
+      window.location.reload();
+    }
+  }
+}
+
 class Server {
 
   files: Map<string, Buffer | string> | undefined;
@@ -113,7 +123,13 @@ class Server {
         res.statusCode = 200;
         const contentType = mimetypes.contentType(path.extname(found.url));
         res.setHeader('content-type', contentType || 'application/octet-stream');
-        res.end(found.blob);
+        if (contentType.startsWith('text/html')) {
+          let html = found.blob.toString('utf8');
+          html += `<script>${__hot_reload.toString()};__hot_reload();</script>`;
+          res.end(html);
+        } else {
+          res.end(found.blob);
+        }
       }
       else {
         res.statusCode = 404;
