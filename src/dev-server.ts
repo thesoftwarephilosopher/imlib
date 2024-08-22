@@ -123,7 +123,7 @@ class Server {
         res.statusCode = 200;
         const contentType = mimetypes.contentType(path.extname(found.url));
         res.setHeader('content-type', contentType || 'application/octet-stream');
-        if (contentType.startsWith('text/html')) {
+        if (process.env.NODE_ENV !== 'production' && contentType.startsWith('text/html')) {
           let html = found.blob.toString('utf8');
           html += `<script>${__hot_reload.toString()};__hot_reload();</script>`;
           res.end(html);
