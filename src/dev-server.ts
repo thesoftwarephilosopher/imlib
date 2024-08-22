@@ -65,14 +65,14 @@ class Server {
 
       if (url === '/hot-reload') {
         res.writeHead(200, {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            'Connection': 'keep-alive',
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
         });
         this.sseClients.add(res);
 
         req.on('close', () => {
-            this.sseClients.delete(res);
+          this.sseClients.delete(res);
         });
         return;
       }
@@ -105,6 +105,7 @@ class Server {
 
       const found = (
         getFile(url) ??
+        getFile(url + '.html') ??
         getFile(path.posix.join(url, 'index.html'))
       );
 
@@ -128,7 +129,7 @@ class Server {
     // Can do `sseClients = Map<url, Set<res_clients>>`
     // for multiple SSE routes. prob not necessary tho.
     this.sseClients.forEach(client => {
-        client.write(`data: ${JSON.stringify(data)}\n\n`);
+      client.write(`data: ${JSON.stringify(data)}\n\n`);
     });
   }
 }
