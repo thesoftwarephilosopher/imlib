@@ -32,6 +32,7 @@ export function startDevServer(runtime: Runtime, config?: { port?: number }) {
 
         updatedPaths.clear();
         server.rebuilt();
+        server.broadcastSSE('/hot-reload', { type: 'reload' });
       }
       catch (e) {
         console.error(e);
@@ -55,11 +56,26 @@ class Server {
   files: Map<string, Buffer | string> | undefined;
   handlers?: Map<string, (body: string) => string> | undefined;
 
+  sseClients = new Set<>();
   rebuilt = () => { };
 
   startServer(port: number) {
     const server = http.createServer((req, res) => {
       const url = req.url!.split('?')[0]!;
+
+      if (url === '/hot-reload') {
+        res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+        });
+        this.sseClients.add(res);
+
+        req.on('close', () => {
+            this.sseClients.delete(res);
+        });
+        return;
+      }
 
       if (req.method === 'POST') {
         const handler = this.handlers?.get(url);
@@ -107,5 +123,12 @@ class Server {
     server.listen(port);
     console.log(`Running on http://localhost:${port}`);
   }
-
+  
+  broadcastSSE(url, data) {
+    // Can do `sseClients = Map<url, Set<res_clients>>`
+    // for multiple SSE routes. prob not necessary tho.
+    this.sseClients.forEach(client => {
+        client.write(`data: ${JSON.stringify(data)}\n\n`);
+    });
+  }
 }
