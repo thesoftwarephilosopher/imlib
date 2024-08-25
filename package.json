@@ -22,11 +22,15 @@
   },
   "homepage": "https://github.com/sdegutis/imlib#readme",
   "dependencies": {
-    "@swc/core": "^1.7.10",
+    "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-modules-commonjs": "^7.24.8",
+    "@babel/plugin-transform-react-jsx": "^7.25.2",
+    "@babel/plugin-transform-typescript": "^7.25.2",
     "chokidar": "^3.6.0",
     "mime-types": "^2.1.35"
   },
   "devDependencies": {
+    "@types/babel__core": "^7.20.5",
     "@types/chokidar": "^1.7.5",
     "@types/mime-types": "^2.1.4",
     "@types/node": "^22.1.0",

@@ -1,4 +1,4 @@
-import * as swc from '@swc/core';
+import * as babel from '@babel/core';
 import { readFileSync } from 'fs';
 
 export class Compiler {
@@ -12,68 +12,52 @@ export class Compiler {
       prefix = '.' + '/..'.repeat(levels);
     }
 
-    const opts: swc.Options = {
-      sourceMaps: 'inline',
-      module: { type: 'es6' },
-      plugin: (program) => {
-        return this.#renameImports(program, browserFilePath);
-      },
-      jsc: {
-        parser: {
-          syntax: 'typescript',
-          tsx: true,
-        },
-        target: 'esnext',
-        transform: {
-          react: {
-            runtime: 'automatic',
-            importSource: '/@imlib',
-            throwIfNamespace: false,
-          }
-        }
-      }
-    };
+    const plugins: babel.PluginItem[] = [
+      [require('@babel/plugin-transform-typescript'), { isTSX: true }],
+      [require('@babel/plugin-transform-react-jsx'), { runtime: 'automatic', importSource: '/@imlib', throwIfNamespace: false }],
+      this.#makeImportRenamer(!!browserFilePath),
+    ];
 
     if (realFilePath) {
-      opts.module!.type = 'commonjs';
-      opts.sourceFileName = realFilePath;
-      // options.sourceMapOptions = { compiledFilename: realFilePath };
-      // options.filePath = pathToFileURL(realFilePath).href;
+      plugins.unshift(require('@babel/plugin-transform-modules-commonjs'));
     }
-    const result = swc.transformSync(code, opts);
-    if (realFilePath) {
-      result.code = result.code.replace(/"\/@imlib\/jsx-runtime"/g, `"/@imlib/jsx-node.js"`);
-    }
-    else {
-      result.code = result.code.replace(/"\/@imlib\/jsx-runtime"/g, `"${prefix}/@imlib/jsx-browser.js"`);
-    }
-    return result;
+
+    return {
+      code: babel.transformSync(code, {
+        filename: realFilePath ?? browserFilePath,
+        plugins,
+      })!.code!,
+    };
   }
 
-  #renameImports(program: swc.Program, browserFilePath?: string): swc.Program {
-    if (browserFilePath) {
-      for (const imp of program.body) {
-        if (imp.type === 'ImportDeclaration') {
-          const dep = imp.source.value;
-          const version = (
-            this.packageJson.devDependencies[dep] ??
-            this.packageJson.dependencies[dep]
-          );
-          if (version) {
-            delete imp.source.raw;
-            imp.source.value = `https://cdn.jsdelivr.net/npm/${dep}@${version}/+esm`;
-          }
-          else {
-            const typeDep = '@types/' + dep.replace(/^@(.+?)\/(.+)/, '$1__$2');
-            if (this.packageJson.devDependencies[typeDep]) {
-              delete imp.source.raw;
-              imp.source.value = `https://cdn.jsdelivr.net/npm/${dep}/+esm`;
+  #makeImportRenamer(inBrowser: boolean): babel.PluginItem {
+    return {
+      visitor: {
+        ImportDeclaration: {
+          enter: (path) => {
+            const dep = path.node.source.value;
+            if (dep === '/@imlib/jsx-runtime') {
+              path.node.source.value = (inBrowser ? '/@imlib/jsx-browser.js' : '/@imlib/jsx-node.js');
+            }
+            else if (inBrowser) {
+              const version = (
+                this.packageJson.devDependencies[dep] ??
+                this.packageJson.dependencies[dep]
+              );
+              if (version) {
+                path.node.source.value = `https://cdn.jsdelivr.net/npm/${dep}@${version}/+esm`;
+              }
+              else {
+                const typeDep = '@types/' + dep.replace(/^@(.+?)\/(.+)/, '$1__$2');
+                if (this.packageJson.devDependencies[typeDep]) {
+                  path.node.source.value = `https://cdn.jsdelivr.net/npm/${dep}/+esm`;
+                }
+              }
             }
           }
         }
       }
-    }
-    return program;
+    };
   }
 
 }
