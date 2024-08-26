@@ -1,5 +1,6 @@
 import * as babel from '@babel/core';
 import { readFileSync } from 'fs';
+import { plugin } from './vanillajsx.js';
 
 export class Compiler {
 
@@ -14,7 +15,7 @@ export class Compiler {
 
     const plugins: babel.PluginItem[] = [
       [require('@babel/plugin-transform-typescript'), { isTSX: true }],
-      [require('@babel/plugin-transform-react-jsx'), { runtime: 'automatic', importSource: '/@imlib', throwIfNamespace: false }],
+      plugin,
       this.#makeImportRenamer(!!browserFilePath),
     ];
 
@@ -36,10 +37,7 @@ export class Compiler {
         ImportDeclaration: {
           enter: (path) => {
             const dep = path.node.source.value;
-            if (dep === '/@imlib/jsx-runtime') {
-              path.node.source.value = (inBrowser ? '/@imlib/jsx-browser.js' : '/@imlib/jsx-node.js');
-            }
-            else if (inBrowser) {
+            if (inBrowser) {
               const version = (
                 this.packageJson.devDependencies[dep] ??
                 this.packageJson.dependencies[dep]
