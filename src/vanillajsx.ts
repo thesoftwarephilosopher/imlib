@@ -32,8 +32,10 @@ export const plugin: babel.PluginItem = {
             let name;
             if (attr.name.type === 'JSXNamespacedName')
               name = t.stringLiteral(attr.name.namespace.name + ':' + attr.name.name.name);//lol
-            else
+            else if (attr.name.name.match(/[^\w]/))
               name = t.stringLiteral(attr.name.name);
+            else
+              name = t.identifier(attr.name.name);
 
             let val;
             if (!attr.value) val = t.booleanLiteral(true);
