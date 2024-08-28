@@ -7,23 +7,15 @@ export class Compiler {
   packageJson = JSON.parse(readFileSync('package.json').toString('utf8'));
 
   compile(code: string, realFilePath?: string, browserFilePath?: string) {
-    const plugins: babel.PluginItem[] = [
-      [require('@babel/plugin-transform-typescript'), { isTSX: true }],
-      babelPluginVanillaJSX,
-    ];
-
-    if (browserFilePath) {
-      plugins.push(this.#importRenamer);
-    }
-
-    if (realFilePath) {
-      plugins.unshift(require('@babel/plugin-transform-modules-commonjs'));
-    }
-
     return {
       code: babel.transformSync(code, {
         filename: realFilePath ?? browserFilePath,
-        plugins,
+        plugins: [
+          ...(realFilePath ? [require('@babel/plugin-transform-modules-commonjs')] : []),
+          [require('@babel/plugin-transform-typescript'), { isTSX: true }],
+          babelPluginVanillaJSX,
+          ...(browserFilePath ? [this.#importRenamer] : []),
+        ],
       })!.code!,
     };
   }
