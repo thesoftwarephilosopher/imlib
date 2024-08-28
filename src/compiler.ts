@@ -33,7 +33,6 @@ export class Compiler {
           if (m = version?.match(/^github:(?<user>.+?)\/(?<repo>.+?)(?:#(?<ver>.+))?$/)) {
             const ver = m.groups!['ver'] ? `@${m.groups!['ver']}` : '';
             path.node.source.value = `https://cdn.jsdelivr.net/gh/${m.groups!['user']}/${m.groups!['repo']}${ver}/index.js`;
-            console.log(path.node.source.value)
           }
           else if (version) {
             path.node.source.value = `https://cdn.jsdelivr.net/npm/${dep}@${version}/+esm`;
