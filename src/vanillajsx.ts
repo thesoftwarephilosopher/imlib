@@ -49,7 +49,7 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
 
           }),
           createChildren(path),
-        ]))
+        ]));
       }
     },
   }
