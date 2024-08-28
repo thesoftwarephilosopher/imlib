@@ -68,7 +68,8 @@ declare namespace JSX {
 
   };
 
-  export type Element = HTMLElement | SVGElement | DocumentFragment | string;
+  export type Element = { jsx: string | Component, children?: any, [attr: string]: any };
+  // export type ElementType = keyof IntrinsicElements | ((...args: any) => Element);
   export type Component<T extends Record<string, any> = {}> = (attrs: T, children: any) => Element;
 }
 
