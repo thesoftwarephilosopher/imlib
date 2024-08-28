@@ -4,9 +4,6 @@ import { Compiler } from "./compiler.js";
 import { convertTsExts, File } from "./file.js";
 import { processSite, SiteProcessor } from "./ssp.js";
 
-const jsxDom = fs.readFileSync(__dirname + '/../src/jsx-dom.ts');
-const jsxStrings = fs.readFileSync(__dirname + '/../src/jsx-strings.ts');
-
 export class Runtime {
 
   files = new Map<string, File>();
@@ -16,8 +13,6 @@ export class Runtime {
 
   #siteDir;
   #processor;
-  #jsxContentSsg: string | Buffer;
-  #jsxContentBrowser: string | Buffer;
 
   compiler = new Compiler();
 
@@ -30,14 +25,9 @@ export class Runtime {
     this.#siteDir = config?.siteDir ?? 'site';
     this.rebuildAll();
     this.#processor = config?.processor ?? processSite;
-    this.#jsxContentSsg = config?.jsxContentSsg ?? jsxStrings;
-    this.#jsxContentBrowser = config?.jsxContentBrowser ?? jsxDom;
   }
 
   build() {
-    this.#shimIfNeeded('/@imlib/jsx-browser.ts', this.#jsxContentBrowser);
-    this.#shimIfNeeded('/@imlib/jsx-node.ts', this.#jsxContentSsg);
-
     const processor = (
       this.files.get('/@imlib/processor.js')?.module?.require().default ??
       this.#processor
