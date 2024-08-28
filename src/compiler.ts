@@ -1,6 +1,6 @@
 import * as babel from '@babel/core';
 import { readFileSync } from 'fs';
-import { plugin } from './vanillajsx.js';
+import { babelPluginVanillaJSX } from './vanillajsx.js';
 
 export class Compiler {
 
@@ -9,7 +9,7 @@ export class Compiler {
   compile(code: string, realFilePath?: string, browserFilePath?: string) {
     const plugins: babel.PluginItem[] = [
       [require('@babel/plugin-transform-typescript'), { isTSX: true }],
-      plugin,
+      babelPluginVanillaJSX,
       this.#makeImportRenamer(!!browserFilePath),
     ];
 

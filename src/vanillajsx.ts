@@ -2,7 +2,7 @@ import * as babel from '@babel/core';
 
 const t = babel.types;
 
-export const plugin: babel.PluginItem = {
+export const babelPluginVanillaJSX: babel.PluginItem = {
   visitor: {
     JSXFragment: {
       enter: (path) => {
