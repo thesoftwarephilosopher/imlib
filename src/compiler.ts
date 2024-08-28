@@ -7,12 +7,6 @@ export class Compiler {
   packageJson = JSON.parse(readFileSync('package.json').toString('utf8'));
 
   compile(code: string, realFilePath?: string, browserFilePath?: string) {
-    let prefix = '';
-    if (browserFilePath && !browserFilePath.startsWith('/@imlib/')) {
-      const levels = browserFilePath.match(/\//g)!.length - 1;
-      prefix = '.' + '/..'.repeat(levels);
-    }
-
     const plugins: babel.PluginItem[] = [
       [require('@babel/plugin-transform-typescript'), { isTSX: true }],
       plugin,
