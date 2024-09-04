@@ -2,14 +2,28 @@ import * as babel from '@babel/core';
 
 const t = babel.types;
 
+const jsxSymbol = t.callExpression(
+  t.memberExpression(
+    t.identifier('Symbol'),
+    t.identifier('for')
+  ),
+  [t.stringLiteral('jsx')],
+);
+
 export const babelPluginVanillaJSX: babel.PluginItem = {
   visitor: {
     JSXFragment: {
       enter: (path) => {
-        path.replaceWith(t.objectExpression([
-          t.objectProperty(t.identifier("jsx"), t.stringLiteral('')),
-          createChildren(path),
-        ]));
+        const jsx = t.objectExpression([
+          t.objectProperty(jsxSymbol, t.booleanLiteral(true), true),
+          t.objectProperty(t.identifier('tag'), t.stringLiteral('')),
+        ]);
+        const attrs = t.objectExpression([]);
+        pushChildren(attrs, path);
+        if (attrs.properties.length > 0) {
+          jsx.properties.push(t.objectProperty(t.identifier('attrs'), attrs));
+        }
+        path.replaceWith(jsx);
       },
     },
     JSXElement: {
@@ -22,11 +36,17 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
         else if (v.name.match(/^[A-Z]/)) name = t.identifier(v.name);
         else name = t.stringLiteral(v.name);
 
-        path.replaceWith(t.objectExpression([
-          t.objectProperty(t.identifier("jsx"), name),
-          ...path.node.openingElement.attributes.map(attr => {
+        const jsx = t.objectExpression([
+          t.objectProperty(jsxSymbol, t.booleanLiteral(true), true),
+          t.objectProperty(t.identifier('tag'), name),
+        ]);
+        const attrs = t.objectExpression([]);
+
+        if (path.node.openingElement.attributes.length > 0) {
+          for (const attr of path.node.openingElement.attributes) {
             if (attr.type === 'JSXSpreadAttribute') {
-              return t.spreadElement(attr.argument);
+              attrs.properties.push(t.spreadElement(attr.argument));
+              continue;
             }
 
             let name;
@@ -42,34 +62,67 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
             else if (attr.value.type === 'StringLiteral') val = t.stringLiteral(attr.value.value);
             else if (attr.value.type === 'JSXElement') val = attr.value;
             else if (attr.value.type === 'JSXFragment') val = attr.value;
-            else if (attr.value.expression.type === 'JSXEmptyExpression') throw new Error();
+            else if (attr.value.expression.type === 'JSXEmptyExpression') throw new Error('impossible?');
             else val = attr.value.expression;
 
-            return t.objectProperty(name, val);
+            attrs.properties.push(t.objectProperty(name, val));
+          }
+        }
 
-          }),
-          createChildren(path),
-        ]));
+        pushChildren(attrs, path);
+
+        if (attrs.properties.length > 0) {
+          jsx.properties.push(t.objectProperty(t.identifier('attrs'), attrs));
+        }
+
+        path.replaceWith(jsx);
       }
     },
   }
 };
 
-function createChildren(path: babel.NodePath<babel.types.JSXFragment | babel.types.JSXElement>): babel.types.ObjectProperty {
-  return t.objectProperty(t.identifier("children"), t.arrayExpression(path.node.children.map(c => {
-    if (c.type === 'JSXElement') return c;
-    if (c.type === 'JSXFragment') return c;
-    if (c.type === 'JSXSpreadChild') return t.spreadElement(c.expression);
-    if (c.type === 'JSXText') return t.stringLiteral(c.value);
+function pushChildren(attrs: babel.types.ObjectExpression, path: babel.NodePath<babel.types.JSXFragment | babel.types.JSXElement>) {
+  const children: (babel.types.Expression | babel.types.SpreadElement)[] = [];
 
-    if (c.type === 'JSXExpressionContainer') {
-      if (c.expression.type === 'JSXEmptyExpression') {
-        return t.stringLiteral('');
-      }
-      return c.expression;
+  for (const c of path.node.children) {
+    if (c.type === 'JSXElement') {
+      children.push(c);
+      continue;
     }
-    return t.stringLiteral('uhhhi');
-  })));
+    if (c.type === 'JSXFragment') {
+      children.push(c);
+      continue;
+    }
+    if (c.type === 'JSXSpreadChild') {
+      children.push(t.spreadElement(c.expression));
+      continue;
+    }
+    if (c.type === 'JSXText') {
+      children.push(t.stringLiteral(c.value));
+      continue;
+    }
+    if (c.type === 'JSXExpressionContainer') {
+      if (c.expression.type !== 'JSXEmptyExpression') {
+        children.push(c.expression);
+      }
+      continue;
+    }
+
+    throw new Error();
+  }
+
+  if (children.length === 1) {
+    const child = children[0]!;
+    if (child.type === 'SpreadElement') {
+      attrs.properties.push(t.objectProperty(t.identifier("children"), child.argument));
+    }
+    else {
+      attrs.properties.push(t.objectProperty(t.identifier("children"), child));
+    }
+  }
+  else if (children.length > 0) {
+    attrs.properties.push(t.objectProperty(t.identifier("children"), t.arrayExpression(children)));
+  }
 }
 
 function convertMember(v: babel.types.JSXMemberExpression): babel.types.MemberExpression {
