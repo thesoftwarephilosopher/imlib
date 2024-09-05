@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path/posix';
-import { Runtime } from './runtime';
+import { Runtime } from './runtime.js';
 
 export function generateFiles(runtime: Runtime) {
   const out = runtime.build()!;

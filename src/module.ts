@@ -1,5 +1,5 @@
 import * as path from "path/posix";
-import { Runtime } from "./runtime";
+import { Runtime } from "./runtime.js";
 
 export class Module {
 

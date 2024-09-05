@@ -1,7 +1,7 @@
-export { startDevServer } from './dev-server';
-export { File } from './file';
-export { generateFiles } from './file-generator';
-export { Module } from './module';
-export { Runtime } from './runtime';
-export * from './ssp';
+export { startDevServer } from './dev-server.js';
+export { File } from './file.js';
+export { generateFiles } from './file-generator.js';
+export { Module } from './module.js';
+export { Runtime } from './runtime.js';
+export * from './ssp.js';
 

@@ -1,5 +1,5 @@
-import { Module } from "./module";
-import { Runtime } from "./runtime";
+import { Module } from "./module.js";
+import { Runtime } from "./runtime.js";
 
 export class File {
 
