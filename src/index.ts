@@ -4,4 +4,5 @@ export { File } from './file.js';
 export { Module } from './module.js';
 export { Runtime } from './runtime.js';
 export * from './ssp.js';
+export { babelPluginVanillaJSX } from './vanillajsx.js';
 

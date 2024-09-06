@@ -1,6 +1,6 @@
 {
   "name": "@imlib/core",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "main": "out/index.js",
   "bin": {
     "imlib": "out/cli.js"
@@ -25,11 +25,11 @@
     "@babel/core": "^7.25.2",
     "@babel/plugin-transform-modules-commonjs": "^7.24.8",
     "@babel/plugin-transform-typescript": "^7.25.2",
+    "@types/babel__core": "^7.20.5",
     "chokidar": "^3.6.0",
     "mime-types": "^2.1.35"
   },
   "devDependencies": {
-    "@types/babel__core": "^7.20.5",
     "@types/chokidar": "^1.7.5",
     "@types/mime-types": "^2.1.4",
     "@types/node": "^22.1.0",
