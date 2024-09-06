@@ -15,14 +15,9 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
     JSXFragment: {
       enter: (path) => {
         const jsx = t.objectExpression([
-          t.objectProperty(jsxSymbol, t.booleanLiteral(true), true),
-          t.objectProperty(t.identifier('tag'), t.stringLiteral('')),
+          t.objectProperty(jsxSymbol, t.stringLiteral(''), true),
         ]);
-        const attrs = t.objectExpression([]);
         pushChildren(jsx, path);
-        if (attrs.properties.length > 0) {
-          jsx.properties.push(t.objectProperty(t.identifier('attrs'), attrs));
-        }
         path.replaceWith(jsx);
       },
     },
@@ -37,15 +32,13 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
         else name = t.stringLiteral(v.name);
 
         const jsx = t.objectExpression([
-          t.objectProperty(jsxSymbol, t.booleanLiteral(true), true),
-          t.objectProperty(t.identifier('tag'), name),
+          t.objectProperty(jsxSymbol, name, true),
         ]);
-        const attrs = t.objectExpression([]);
 
         if (path.node.openingElement.attributes.length > 0) {
           for (const attr of path.node.openingElement.attributes) {
             if (attr.type === 'JSXSpreadAttribute') {
-              attrs.properties.push(t.spreadElement(attr.argument));
+              jsx.properties.push(t.spreadElement(attr.argument));
               continue;
             }
 
@@ -65,16 +58,10 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
             else if (attr.value.expression.type === 'JSXEmptyExpression') throw new Error('impossible?');
             else val = attr.value.expression;
 
-            attrs.properties.push(t.objectProperty(name, val));
+            jsx.properties.push(t.objectProperty(name, val));
           }
         }
-
         pushChildren(jsx, path);
-
-        if (attrs.properties.length > 0) {
-          jsx.properties.push(t.objectProperty(t.identifier('attrs'), attrs));
-        }
-
         path.replaceWith(jsx);
       }
     },
@@ -117,7 +104,7 @@ function pushChildren(parent: babel.types.ObjectExpression, path: babel.NodePath
       parent.properties.push(t.objectProperty(t.identifier("children"), child.argument));
     }
     else {
-      parent.properties.push(t.objectProperty(t.identifier("child"), child));
+      parent.properties.push(t.objectProperty(t.identifier("children"), child));
     }
   }
   else if (children.length > 0) {
