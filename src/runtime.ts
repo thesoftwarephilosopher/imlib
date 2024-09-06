@@ -97,12 +97,6 @@ export class Runtime {
     this.files.set(file.path, file);
   }
 
-  #shimIfNeeded(filepath: string, content: string | Buffer) {
-    if (!this.files.has(convertTsExts(filepath))) {
-      this.#putFile(filepath, content);
-    }
-  }
-
   realPathFor(filepath: string) {
     return path.join(this.#siteDir, filepath);
   }
