@@ -19,8 +19,6 @@ export class Runtime {
   constructor(config?: {
     siteDir?: string,
     processor?: SiteProcessor,
-    jsxContentSsg?: string | Buffer,
-    jsxContentBrowser?: string | Buffer,
   }) {
     this.#siteDir = config?.siteDir ?? 'site';
     this.rebuildAll();
