@@ -1,10 +1,9 @@
 declare namespace JSX {
 
   type Element = {
-    jsx: string | any,
-    children: any[],
-    [attr: string]: any,
-  };
+    tag: string | any,
+    attrs?: Record<string, any>,
+  } & ({ child?: any } | { children?: any[] });
 
 }
 

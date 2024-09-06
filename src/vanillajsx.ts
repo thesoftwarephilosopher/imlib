@@ -19,7 +19,7 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
           t.objectProperty(t.identifier('tag'), t.stringLiteral('')),
         ]);
         const attrs = t.objectExpression([]);
-        pushChildren(attrs, path);
+        pushChildren(jsx, path);
         if (attrs.properties.length > 0) {
           jsx.properties.push(t.objectProperty(t.identifier('attrs'), attrs));
         }
@@ -69,7 +69,7 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
           }
         }
 
-        pushChildren(attrs, path);
+        pushChildren(jsx, path);
 
         if (attrs.properties.length > 0) {
           jsx.properties.push(t.objectProperty(t.identifier('attrs'), attrs));
@@ -81,7 +81,7 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
   }
 };
 
-function pushChildren(attrs: babel.types.ObjectExpression, path: babel.NodePath<babel.types.JSXFragment | babel.types.JSXElement>) {
+function pushChildren(parent: babel.types.ObjectExpression, path: babel.NodePath<babel.types.JSXFragment | babel.types.JSXElement>) {
   const children: (babel.types.Expression | babel.types.SpreadElement)[] = [];
 
   for (const c of path.node.children) {
@@ -114,14 +114,14 @@ function pushChildren(attrs: babel.types.ObjectExpression, path: babel.NodePath<
   if (children.length === 1) {
     const child = children[0]!;
     if (child.type === 'SpreadElement') {
-      attrs.properties.push(t.objectProperty(t.identifier("children"), child.argument));
+      parent.properties.push(t.objectProperty(t.identifier("children"), child.argument));
     }
     else {
-      attrs.properties.push(t.objectProperty(t.identifier("children"), child));
+      parent.properties.push(t.objectProperty(t.identifier("child"), child));
     }
   }
   else if (children.length > 0) {
-    attrs.properties.push(t.objectProperty(t.identifier("children"), t.arrayExpression(children)));
+    parent.properties.push(t.objectProperty(t.identifier("children"), t.arrayExpression(children)));
   }
 }
 
