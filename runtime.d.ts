@@ -2,8 +2,8 @@ declare namespace JSX {
 
   type Element = {
     [jsx: symbol]: any,
-    children?: any,
     [attr: string]: any,
+    children?: any,
   };
 
 }
