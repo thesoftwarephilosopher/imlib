@@ -1,8 +1,8 @@
 export type InFiles = ReturnType<Map<string, FsFile>['values']>;
 export type SiteProcessor = (files: InFiles, outfiles: Map<string, Buffer | string>) => void;
 
-export const processSite: SiteProcessor = (files, outfiles) => {
-  for (const file of files) {
+export const processSite: SiteProcessor = (infiles, outfiles) => {
+  for (const file of infiles) {
     for (const { path, content } of processFile(file)) {
       outfiles.set(path, content);
     }
