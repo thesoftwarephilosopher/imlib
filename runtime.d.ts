@@ -1,9 +1,10 @@
 declare namespace JSX {
 
   type Element = {
-    tag: string | any,
-    attrs?: Record<string, any>,
-  } & ({ child?: any } | { children?: any[] });
+    [jsx: unique symbol]: any,
+    children?: any,
+    [attr: string]: any,
+  };
 
 }
 
