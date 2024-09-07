@@ -25,7 +25,8 @@ export class Runtime {
     );
 
     const start = Date.now();
-    const outfiles = processor(this.files.values());
+    const outfiles = new Map<string, Buffer | string>();
+    processor(this.files.values(), outfiles);
     console.log(`Time: ${Date.now() - start} ms`);
     return outfiles;
   }
