@@ -14,6 +14,19 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
   visitor: {
     JSXFragment: {
       enter: (path) => {
+        path.node.children = path.node.children.filter(c => c.type !== 'JSXText' || c.value.match(/[^\s]/));
+
+        if (path.node.children.length === 1) {
+          const child = path.node.children[0]!;
+          if (child.type === 'JSXElement' || child.type === 'JSXFragment')
+            path.replaceWith(child);
+          else if (child.type === 'JSXExpressionContainer' || child.type === 'JSXSpreadChild')
+            path.replaceWith(child.expression);
+          else if (child.type === 'JSXText')
+            path.replaceWith(t.stringLiteral(child.value));
+          return;
+        }
+
         const jsx = t.objectExpression([
           t.objectProperty(jsxSymbol, t.stringLiteral(''), true),
         ]);
@@ -23,6 +36,8 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
     },
     JSXElement: {
       enter: (path) => {
+        path.node.children = path.node.children.filter(c => c.type !== 'JSXText' || c.value.match(/[^\s]/));
+
         let name;
         const v = path.node.openingElement.name;
 
@@ -73,6 +88,8 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
 };
 
 function pushChildren(parent: babel.types.ObjectExpression, path: babel.NodePath<babel.types.JSXFragment | babel.types.JSXElement>) {
+  if (path.node.children.length === 0) return;
+
   const children: (babel.types.Expression | babel.types.SpreadElement)[] = [];
 
   for (const c of path.node.children) {
