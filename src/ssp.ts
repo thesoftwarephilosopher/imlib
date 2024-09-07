@@ -12,7 +12,7 @@ export const processSite: SiteProcessor = ({ inFiles, outFiles }) => {
 };
 
 const isArrayFile = /\/.*(?<slug>\[.+\]).*\..+\.js$/;
-const isSingleFile = /\.js$/;
+const isSingleFile = /\..+\.js$/;
 
 export function processFile(file: FsFile): { path: string, content: string | Buffer }[] {
   const out = [];
