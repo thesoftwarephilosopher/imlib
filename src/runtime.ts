@@ -19,16 +19,16 @@ export class Runtime {
   }
 
   build() {
-    const processor = (
+    const processor: SiteProcessor = (
       this.files.get('/@imlib/processor.js')?.module?.require().default ??
       this.processor
     );
 
     const start = Date.now();
-    const outfiles = new Map<string, Buffer | string>();
-    processor(this.files.values(), outfiles);
+    const outFiles = new Map<string, Buffer | string>();
+    processor({ inFiles: this.files.values(), outFiles });
     console.log(`Time: ${Date.now() - start} ms`);
-    return outfiles;
+    return outFiles;
   }
 
   rebuildAll() {
@@ -84,7 +84,7 @@ export class Runtime {
     this.#putFile(filepath, fs.readFileSync(this.realPathFor(filepath)));
   }
 
-  #putFile(filepath: string, content: string | Buffer) {
+  #putFile(filepath: string, content: Buffer) {
     const file = new File(filepath, content, this);
     this.files.set(file.path, file);
   }

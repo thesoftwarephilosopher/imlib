@@ -1,7 +1,7 @@
 import { Module } from "./module.js";
 import { Runtime } from "./runtime.js";
 
-export class File {
+export class File implements FsFile {
 
   module?: Module;
 

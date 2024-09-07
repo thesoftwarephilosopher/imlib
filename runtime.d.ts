@@ -10,7 +10,7 @@ declare namespace JSX {
 
 type FsFile = {
   path: string;
-  content: Buffer;
+  content: Buffer | string;
   module?: FsModule;
 };
 
