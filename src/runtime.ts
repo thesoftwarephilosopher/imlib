@@ -8,27 +8,20 @@ export class Runtime {
 
   files = new Map<string, File>();
   #deps = new Map<string, Set<string>>();
-
   handlers = new Map<string, (body: string) => string>();
-
-  #siteDir;
-  #processor;
-
   compiler = new Compiler();
 
-  constructor(config?: {
-    siteDir?: string,
-    processor?: SiteProcessor,
-  }) {
-    this.#siteDir = config?.siteDir ?? 'site';
+  constructor(
+    private siteDir: string = 'site',
+    private processor: SiteProcessor = processSite,
+  ) {
     this.rebuildAll();
-    this.#processor = config?.processor ?? processSite;
   }
 
   build() {
     const processor = (
       this.files.get('/@imlib/processor.js')?.module?.require().default ??
-      this.#processor
+      this.processor
     );
 
     const start = Date.now();
@@ -49,7 +42,7 @@ export class Runtime {
       return;
     }
 
-    const filepaths = paths.map(p => p.slice(this.#siteDir.length));
+    const filepaths = paths.map(p => p.slice(this.siteDir.length));
 
     for (const filepath of filepaths) {
       if (fs.existsSync(this.realPathFor(filepath))) {
@@ -96,7 +89,7 @@ export class Runtime {
   }
 
   realPathFor(filepath: string) {
-    return path.join(this.#siteDir, filepath);
+    return path.join(this.siteDir, filepath);
   }
 
   addDeps(requiredBy: string, requiring: string) {
