@@ -10,11 +10,13 @@ const jsxSymbol = t.callExpression(
   [t.stringLiteral('jsx')],
 );
 
+const WHITESPACE = /[^\s]/;
+
 export const babelPluginVanillaJSX: babel.PluginItem = {
   visitor: {
     JSXFragment: {
       enter: (path) => {
-        path.node.children = path.node.children.filter(c => c.type !== 'JSXText' || c.value.match(/[^\s]/));
+        path.node.children = path.node.children.filter(c => c.type !== 'JSXText' || c.value.match(WHITESPACE));
 
         if (path.node.children.length === 1) {
           const child = path.node.children[0]!;
@@ -36,7 +38,7 @@ export const babelPluginVanillaJSX: babel.PluginItem = {
     },
     JSXElement: {
       enter: (path) => {
-        path.node.children = path.node.children.filter(c => c.type !== 'JSXText' || c.value.match(/[^\s]/));
+        path.node.children = path.node.children.filter(c => c.type !== 'JSXText' || c.value.match(WHITESPACE));
 
         let name;
         const v = path.node.openingElement.name;
