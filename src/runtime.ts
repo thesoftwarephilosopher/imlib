@@ -12,7 +12,7 @@ export class Runtime {
   compiler = new Compiler();
 
   constructor(
-    private siteDir: string = 'site',
+    public siteDir: string = 'site',
     private processor: SiteProcessor = processSite,
   ) {
     this.rebuildAll();

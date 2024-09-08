@@ -44,7 +44,7 @@ export function startDevServer(runtime: Runtime, config?: { port?: number }) {
   (chokidar.watch('package.json', { ignoreInitial: true, cwd: process.cwd() })
     .on('change', pathUpdated));
 
-  (chokidar.watch('site', { ignoreInitial: true, cwd: process.cwd() })
+  (chokidar.watch(runtime.siteDir, { ignoreInitial: true, cwd: process.cwd() })
     .on('add', pathUpdated)
     .on('change', pathUpdated)
     .on('unlink', pathUpdated));
