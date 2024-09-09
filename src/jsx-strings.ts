@@ -2,29 +2,48 @@ const UNARY = new Set(["img", "br", "hr", "input", "meta", "link"]);
 
 const jsx = Symbol.for('jsx');
 
-export function jsxToString({ [jsx]: tag, ...attrs }: JSX.Element): string {
-  if (typeof tag === 'function') {
-    const result = tag(attrs);
-    if (result && typeof result === 'object' && jsx in result) {
-      return jsxToString(result);
-    }
-    return result;
-  }
-
-  let children = attrs.children;
-  delete attrs.children;
-  if (!Array.isArray(children)) children = [children];
+export function jsxToString(object: any): string {
+  const t = typeof object;
+  if (t === 'string') return object;
+  if (t === 'undefined' || t === 'boolean' || object === null) return '';
+  if (t !== 'object') return String(object);
 
   const parts: string[] = [];
 
+  if (object instanceof Array) {
+    for (const child of object) {
+      parts.push(jsxToString(child));
+    }
+    return parts.join('');
+  }
+
+  if (!(jsx in object)) return String(object);
+
+  const tag = object[jsx];
+  delete object[jsx];
+
+  if (typeof tag === 'function') {
+    return jsxToString(tag(object));
+  }
+
+  const children = object.children;
+  delete object.children;
+
   if (tag === '') {
-    pushChildren(children, parts);
+    if (children instanceof Array) {
+      for (const child of children) {
+        parts.push(jsxToString(child));
+      }
+    }
+    else {
+      parts.push(jsxToString(children));
+    }
     return parts.join('');
   }
 
   parts.push('<', tag);
-  for (const k in attrs) {
-    const v = attrs[k];
+  for (const k in object) {
+    const v = object[k];
     if (v === true)
       parts.push(' ', k);
     else if (v)
@@ -33,27 +52,16 @@ export function jsxToString({ [jsx]: tag, ...attrs }: JSX.Element): string {
   parts.push('>');
 
   if (!UNARY.has(tag)) {
-    pushChildren(children, parts);
+    if (children instanceof Array) {
+      for (const child of children) {
+        parts.push(jsxToString(child));
+      }
+    }
+    else {
+      parts.push(jsxToString(children));
+    }
     parts.push('</', tag, '>');
   }
 
   return parts.join('');
-}
-
-function pushChildren(children: any[], parts: string[]) {
-  for (const child of children) {
-    if (child !== null && child !== undefined && child !== false) {
-      if (Array.isArray(child)) {
-        pushChildren(child, parts);
-      }
-      else {
-        if (typeof child === 'object' && jsx in child) {
-          parts.push(jsxToString(child));
-        }
-        else {
-          parts.push(child);
-        }
-      }
-    }
-  }
 }
