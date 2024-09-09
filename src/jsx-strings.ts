@@ -3,27 +3,43 @@ const UNARY = new Set(["img", "br", "hr", "input", "meta", "link"]);
 const jsx = Symbol.for('jsx');
 
 export function jsxToString(object: any): string {
-  const t = typeof object;
-  if (t === 'string') return object;
-  if (t === 'undefined' || t === 'boolean' || object === null) return '';
-  if (t !== 'object') return String(object);
-
   const parts: string[] = [];
+  push(object, parts);
+  return parts.join('');
+}
+
+function push(object: any, parts: string[]): void {
+  if (typeof object === 'string') {
+    parts.push(object);
+    return;
+  }
+
+  if (typeof object === 'undefined' || typeof object === 'boolean' || object === null) {
+    return;
+  }
+
+  if (typeof object !== 'object') {
+    parts.push(String(object));
+    return;
+  }
 
   if (object instanceof Array) {
     for (const child of object) {
-      parts.push(jsxToString(child));
+      push(child, parts);
     }
-    return parts.join('');
+    return;
   }
 
-  if (!(jsx in object)) return String(object);
+  if (!(jsx in object)) {
+    parts.push(String(object));
+    return;
+  }
 
   const tag = object[jsx];
   delete object[jsx];
 
   if (typeof tag === 'function') {
-    return jsxToString(tag(object));
+    return push(tag(object), parts);
   }
 
   const children = object.children;
@@ -32,13 +48,13 @@ export function jsxToString(object: any): string {
   if (tag === '') {
     if (children instanceof Array) {
       for (const child of children) {
-        parts.push(jsxToString(child));
+        push(child, parts);
       }
     }
     else {
-      parts.push(jsxToString(children));
+      push(children, parts);
     }
-    return parts.join('');
+    return;
   }
 
   parts.push('<', tag);
@@ -54,14 +70,12 @@ export function jsxToString(object: any): string {
   if (!UNARY.has(tag)) {
     if (children instanceof Array) {
       for (const child of children) {
-        parts.push(jsxToString(child));
+        push(child, parts);
       }
     }
     else {
-      parts.push(jsxToString(children));
+      push(children, parts);
     }
     parts.push('</', tag, '>');
   }
-
-  return parts.join('');
 }
