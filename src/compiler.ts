@@ -10,10 +10,8 @@ export class Compiler {
     return {
       code: babel.transformSync(code, {
         filename: realFilePath ?? browserFilePath,
-        presets: [
-          [require('@babel/preset-env'), { modules: realFilePath ? 'commonjs' : false }],
-        ],
         plugins: [
+          ...(realFilePath ? [require('@babel/plugin-transform-modules-commonjs')] : []),
           [require('@babel/plugin-transform-typescript'), { isTSX: true }],
           [require('@babel/plugin-syntax-import-attributes')],
           babelPluginVanillaJSX,
