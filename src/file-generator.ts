@@ -1,6 +1,31 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
+/**
+ * Creates dirs and files on disk at the given
+ * subroot based on the given file map.
+ * 
+ * Paths are absolute, and made relative to `outDir`.
+ * 
+ * * `opts?.parent` defaults to cwd
+ * * `opts?.dry` defaults to false
+ * * `opts?.dir` defaults to `"docs"`
+ * 
+ * ```typescript
+ * import { generateFiles } from 'immaculata'
+ * 
+ * generateFiles(new Map([
+ *   ['/index.html', 'hello world'],
+ *   ['/about.html', 'about my site'],
+ *   ['/css/main.css', 'body{...}'],
+ * ]))
+ * 
+ * // writefile: docs/index.html
+ * // writefile: docs/about.html
+ * // mkdir: docs/css
+ * // writefile: docs/css/main.css
+ * ```
+ */
 export function generateFiles(out: Map<string, { content: Buffer | string }>, opts?: {
   parent?: string,
   dry?: boolean,

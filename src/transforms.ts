@@ -1,5 +1,14 @@
 import ts from 'typescript'
 
+/**
+ * Returns a Babel plugin that transforms imports
+ * to use given replacements with these rules:
+ * 
+ * * Imports starting with `.` or `/` or `http` are left alone
+ * * Full matches are replaced verbatim
+ * * Lib matches only have the lib replaced
+ * * Package import roots are replaced via its "homepage" package.json key
+ */
 export function transformExternalModuleNames(replacements?: Record<string, string>): ts.TransformerFactory<ts.SourceFile> {
   return ctx => node => {
     return ts.visitNode(node, visitor) as ts.SourceFile

@@ -2,6 +2,7 @@ import { readFileSync } from "fs"
 import type { RegisterHooksOptions } from "module"
 import { fileURLToPath } from "url"
 
+/** Resolver hook that looks for `.{ts,tsx,jsx}` when `.js` is not found. */
 export const tryAltExts: RegisterHooksOptions = {
 
   resolve: (spec, ctx, next) => {
@@ -26,6 +27,10 @@ export const tryAltExts: RegisterHooksOptions = {
 
 }
 
+/**
+ * Loader hook for JSX/TSX files which just passes the
+ * source code and file URL to your function to compile.
+ */
 export function compileJsx(fn: (src: string, url: string) => string): RegisterHooksOptions {
   return {
 
@@ -51,6 +56,17 @@ export function compileJsx(fn: (src: string, url: string) => string): RegisterHo
   }
 }
 
+/**
+ * Remaps the given import module specifier to another.
+ * 
+ * For example:
+ * 
+ * ```ts
+ * import { hooks } from 'immaculata'
+ * import { registerHooks } from 'module'
+ * registerHooks(hooks.mapImport('react/jsx-runtime', 'immaculata/jsx-strings.js'))
+ * ```
+ */
 export function mapImport(from: string, to: string): RegisterHooksOptions {
   return {
     resolve: (spec, ctx, next) => {

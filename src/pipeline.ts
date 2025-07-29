@@ -25,6 +25,29 @@ class PipelineFile {
 
 type Filter = { regex: RegExp, negate: boolean }
 
+/**
+ * The Pipeline API is convenience class for
+ * arbitrarily manipulating an array of files,
+ * usually to produce a front-end file tree,
+ * but isn't specific to that purpose.
+ * 
+ * You don't need a pipeline object, you can just
+ * manually * transform a `FileTree.files` into a map
+ * compatible with `DevServer` and `generateFiles`.
+ * 
+ * But that gets very inconvenient very quickly:
+ * 
+ * * Every `file.content` is always a Buffer, but sometimes
+ *   we want to lazily transform it to a string and use that
+ * 
+ * * Filtering files is almost always path-based,
+ *   and would be much more convenient with regexes
+ * 
+ * * Adding and removing individual files or arrays of files
+ *   is technically possible but *very* repetitious
+ * 
+ * So the `Pipeline` class was created as a convenience.
+*/
 export class Pipeline {
 
   static from(files: FileTree['files']) {

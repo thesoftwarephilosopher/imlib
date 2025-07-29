@@ -5,13 +5,28 @@ import * as path from 'path'
 
 export class DevServer {
 
+  /** The files to serve. Has the same path format as `tree.files`. */
   public files: Map<string, { content: Buffer | string }> | undefined
+
+  /**
+   * Handler that returns 404 and the given content
+   * when the path isn't present in `server.files`.
+   */
   public notFound?: (path: string) => string
 
+  /** Triggers SSE for listeners of `hmrPath` (see constructor). */
   public reload = (data?: any) => this.events.emit('reload', data ?? {})
+
   private events = new EventEmitter<{ reload: [data: any] }>();
   private reloadables = new Set<http.ServerResponse>()
 
+  /**
+   * Creates a new http server and begins listening immediately at the given port.
+   * 
+   * Optional fn `onRequest` can modify `res` or `res.req`.
+   * 
+   * If `onRequest` closes the request, it must return `handled`.
+   */
   public constructor(port: number, opts?: {
     hmrPath?: string,
     prefix?: string,

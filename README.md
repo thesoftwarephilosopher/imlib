@@ -49,3 +49,96 @@ registerHooks(hooks.mapImport('react/jsx-runtime', 'immaculata/jsx-strings.js'))
 // you can now import tsx files!
 const { template } = await import('./site/template.tsx')
 ```
+
+# API Examples
+
+## transformExternalModuleNames
+
+```ts
+import ts from 'typescript'
+
+
+function transform(text: string, path: string) {
+  return ts.transpileModule(text, {
+    fileName: path,
+    compilerOptions: {
+      module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ESNext,
+      jsx: ts.JsxEmit.ReactJSX,
+      sourceMap: true,
+    },
+    transformers: {
+      after: [transformExternalModuleNames(import.meta.dirname, {
+        // replacements
+      })]
+    }
+  })
+}
+```
+
+```ts
+// given
+const replacements = {
+  'bar/qux': '/_barqux.js',
+}
+
+import qux from "bar/qux"
+
+// becomes
+
+import qux from "/_barqux.js";
+```
+
+```ts
+// given
+const replacements = {
+  'foo': 'https://example.com/foo123',
+}
+
+import foo from "foo"
+import foosub from "foo/sub"
+import withext from "foo/sub.js"
+
+// becomes
+
+import foo from "https://example.com/foo123";
+import foosub from "https://example.com/foo123/sub";
+import withext from "https://example.com/foo123/sub.js";
+```
+
+### Package lookup
+
+```ts
+// node_modules/foo/package.json
+{
+  "homepage": "http://example.com/api/foo/"
+}
+
+// replacements isn't needed when "homepage" is set
+
+import foo from 'foo'
+import foobar from 'foo/bar.js'
+
+// becomes
+
+import foo from 'http://example.com/api/foo/'
+import foobar from 'http://example.com/api/foo/bar.js'
+```
+
+### Using React
+
+```ts
+const replacements = {
+  'react': 'https://esm.sh/react',
+  'react-dom': 'https://esm.sh/react-dom',
+}
+
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+
+// becomes
+
+import React from "https://esm.sh/react";
+import { createRoot } from "https://esm.sh/react-dom/client";
+import { jsx as _jsx } from "https://esm.sh/react/jsx-runtime";
+```
