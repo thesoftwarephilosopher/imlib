@@ -516,6 +516,406 @@ Mitigations:
 * Healthy library competition can produce ideal vendor functions
 
 
+# Guides
+
+## Enabling HMR in Node.js
+
+By default, the native Node.js module system caches module exports.
+The new `--watch` and `--watch-paths` CLI param allows reloading
+the entire runtime when the given paths change. This workflow is
+sufficient for simple scripts.
+
+But for a fast development cycle, we should avoid discarding state,
+whether singletons, data files, or code modules, unless they change.
+
+Using `immaculata`, you can:
+
+* Load a file tree into memory and keep it updated
+* Tell the Node.js module system to load from this tree
+* Invalidate modules when changed for re-execution
+* Invalidate modules when any of their dependencies change
+* Optionally transpile JSX/TSX modules however you want
+
+A simple example of enabling HMR in Node.js:
+
+```ts
+import { FileTree } from "immaculata"
+import { useTree } from "immaculata/hooks.js"
+import { registerHooks } from 'module'
+
+const tree = new FileTree('site', import.meta.dirname)
+registerHooks(useTree(tree))
+
+const myModule = await import('site/myModule.js')
+// site/myModule.js is executed
+
+const myModule2 = await import('site/myModule.js')
+// site/myModule.js is NOT executed
+
+tree.watch().on('filesUpdated', async () => {
+  const myModule = await import('site/myModule.js')
+  // site/myModule.js IS executed again if invalidated
+})
+```
+
+Now any time you save `site/myModule.js`, or any
+module that it imports (recursively), the code
+in this file will be *re-executed* (via cache
+invalidation). This provides efficient HMR in Node.js
+using its native module system.
+
+Note that it also works with `require` if the project
+is in `ESM` mode (via package.json's `type` key).
+But `module.createRequire` will not (yet) respect
+the cache invalidation feature due to
+[node#57696](https://github.com/nodejs/node/issues/57696).
+
+
+## Enabling JSX in Node.js
+
+By default, the native Node.js module system:
+
+* Refuses to consider `.jsx` or `.tsx` files to be importable modules
+* Doesn't know how to transpile JSX syntax into JavaScript
+
+Using `immaculata`, you can:
+
+* Make Node.js recognize `.jsx` and `.tsx` files as valid modules
+* Tell Node.js how to transform JSX/TSX into valid JavaScript
+* Remap the default `react/jsx-runtime` to another module
+
+```ts
+import { compileJsx } from "immaculata/hooks.js"
+import { registerHooks } from "module"
+import ts from 'typescript'
+import { fileURLToPath } from "url"
+
+// transpiles tsx into javascript when Node.js loads it
+registerHooks(compileJsx((str, url) =>
+  ts.transpileModule(str, {
+    fileName: fileURLToPath(url),
+    compilerOptions: {
+      target: ts.ScriptTarget.ESNext,
+      module: ts.ModuleKind.ESNext,
+      jsx: ts.JsxEmit.ReactJSX,
+      sourceMap: true,
+      inlineSourceMap: true,
+      inlineSources: true,
+    }
+  }).outputText
+))
+```
+
+
+
+### Remapping JSX implementation
+
+By default, using JSX will auto-import `react/jsx-runtime` like usual.
+
+You'll almost definitely want to remap that import to *anything else*:
+
+```ts
+import { hooks } from "immaculata"
+import { registerHooks } from "module"
+
+registerHooks(hooks.mapImport('react/jsx-runtime', 'another-jsx-impl'))
+```
+
+
+
+### Simple JSX string-builder
+
+The module `'immaculata/jsx-strings.js'` provides
+`react/jsx-runtime`-compatible exports that are
+implemented as a highly efficient HTML string builder.
+
+```ts
+import { hooks } from "immaculata"
+import { registerHooks } from "module"
+
+registerHooks(hooks.mapImport('react/jsx-runtime', 'immaculata/jsx-strings.js'))
+```
+
+
+
+### Using your own JSX implementation
+
+To use a JSX implementatoin within a [FileTree](../api/filetree.md#filetree), prepend its `root`:
+
+~~~ts
+import { FileTree, hooks } from "immaculata"
+import { registerHooks } from "module"
+
+const tree = new FileTree('site', import.meta.dirname)
+
+registerHooks(hooks.mapImport('react/jsx-runtime', tree.root + '/my-jsx.ts'))
+~~~
+
+
+
+### Importing with .js
+
+To allow importing `.jsx/.tsx` files but using the `.js` extension:
+
+```ts
+import { hooks } from "immaculata"
+import { registerHooks } from "module"
+
+registerHooks(hooks.tryAltExts)
+
+import('./foo.js') // now works even though only foo.tsx exists
+```
+
+
+
+### JSX Types
+
+If you're not using a library
+that provides JSX types,
+you'll need to add your own.
+
+Here's a basic starter:
+
+```ts
+declare namespace JSX {
+
+  type IntrinsicElements = Record<string, any>
+
+  interface ElementChildrenAttribute {
+    children: any
+  }
+
+}
+```
+
+If you're using `immaculata/jsx-strings.js` with [mapImport](../api/module-hooks.md#mapimport),
+then your JSX types won't be imported automatically.
+So you'll need to import the JSX types manually:
+
+```ts
+import type { } from 'immaculata/jsx-strings.js'
+```
+
+This doesn't add anything to [IntrinsicElements], so you'll either need to create that, or import this:
+
+```ts
+import type { } from 'immaculata/jsx-strings-html.js'
+```
+
+You can use interface augmentation to add or modify keys:
+
+```ts
+declare namespace JSX {
+
+  // add key-values, e.g.
+  interface IntrinsicElements {
+    div: HtmlElements['div'] & { foo: string }
+    bar: { qux: number }
+  }
+
+  // or just extend something or whatever,
+  // useful for extending a mapped type
+  interface IntrinsicElements extends Foo { }
+
+  // note that you can do both, and in either order
+
+}
+```
+
+[IntrinsicElements]: https://www.typescriptlang.org/docs/handbook/jsx.html#intrinsic-elements
+
+
+## Local developer setup
+
+If you use VS Code, this launch script runs `main.ts`
+(Node.js allows running `.ts` files natively as of 23.10)
+and enables reloading the process when `main.ts` changes.
+
+Then `main.ts` can setup the bare minimum dev environment
+(see [Simple build tool](simple-build-tool.md#simple-build-tool))
+that loads a module within a HMR-enabled subtree to do
+the rest of the work.
+
+```json
+// .vscode/launch.json
+
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Program",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.ts",
+      "args": [ "dev" ],
+      "skipFiles": [ "<node_internals>/**" ],
+      "runtimeArgs": [
+        "--watch-path=main.ts",
+        "--disable-warning=ExperimentalWarning"
+      ],
+    }
+  ]
+}
+```
+
+
+## Simple build tool
+
+This code either runs a dev server or outputs files to disk,
+depending on the arg passed to it, and uses `site/build.ts`
+to provide the list of the site's files.
+
+When in dev mode, if any file under `site` changes, the server
+is updated and any SSE watchers of `/reload` are notified.
+
+It enables JSX within Node.js and turns JSX expressions into
+highly efficient string builders.
+
+The code is adapted from [this site's source code](https://github.com/thesoftwarephilosopher/immaculata.dev/blob/main/main.ts).
+
+```ts
+import * as immaculata from 'immaculata'
+import * as hooks from 'immaculata/hooks.js'
+import { registerHooks } from 'module'
+import ts from 'typescript'
+import { fileURLToPath } from 'url'
+
+const tree = new immaculata.FileTree('site', import.meta.dirname)
+registerHooks(hooks.useTree(tree))
+registerHooks(hooks.mapImport('react/jsx-runtime', 'immaculata/jsx-strings.js'))
+registerHooks(hooks.compileJsx(compileViaTypescript))
+
+if (process.argv[2] === 'dev') {
+  const server = new immaculata.DevServer(8080, { hmrPath: '/reload' })
+  server.files = await processSite()
+
+  tree.watch().on('filesUpdated', async (paths) => {
+    try { server.files = await processSite() }
+    catch (e) { console.error(e) }
+    server.reload()
+  })
+}
+else {
+  immaculata.generateFiles(await processSite())
+}
+
+async function processSite() {
+  const mod = await import("./site/build.ts")
+  return await mod.processSite(tree)
+}
+
+function compileViaTypescript(str: string, url: string) {
+  return ts.transpileModule(str, {
+    fileName: fileURLToPath(url),
+    compilerOptions: {
+      target: ts.ScriptTarget.ESNext,
+      module: ts.ModuleKind.ESNext,
+      jsx: ts.JsxEmit.ReactJSX,
+      sourceMap: true,
+      inlineSourceMap: true,
+      inlineSources: true,
+    }
+  }).outputText
+}
+```
+
+
+## Simple MD SSG
+
+In the manner of the time honored tradition
+of writing every site in markdown, this code
+implements `processSite` as referenced by the
+[Simple build tool](simple-build-tool.md#simple-build-tool) guide.
+
+```ts
+import { Pipeline, type FileTree } from 'immaculata'
+import { md } from "./markdown.ts"
+import { template } from "./template.tsx"
+
+export function processSite(tree: FileTree) {
+  const files = Pipeline.from(tree.files)
+
+  // make `site/public/` be the file tree
+  files.without('/public/').remove()
+  files.do(f => f.path = f.path.slice('/public'.length))
+
+  // find all .md files and render in a jsx template
+  files.with(/\.md$/).do(f => {
+    f.path = f.path.replace('.md', '.html')
+    f.text = template(md.render(f.text))
+  })
+
+  return files.results()
+}
+```
+
+## Publishing to GH Pages
+
+Using the [Simple build tool guide](simple-build-tool.md#simple-build-tool)
+as a starting point, it's trivial to publish to GitHub pages:
+
+```yaml
+# .github/workflows/static.yml
+
+name: Deploy static content to Pages
+
+on:
+  push:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "23.10"
+          cache: npm
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: node main.ts generate
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+
+
+
 # API Examples
 
 ## transformExternalModuleNames
